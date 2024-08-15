@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- v1 REST API endpoints, sourced from https://docs.linkwarden.app/api/overview -->
+<resources>
+    <string name="api_v1_user">%1s/api/v1/users/%2s</string>
+    <string name="api_v1_user_info">%1s/api/v1/public/users</string>
+    <string name="api_v1_tags">%1s/api/v1/tags</string>
+    <string name="api_v1_collection">%1s/api/v1/collections/%2s</string>
+    <string name="api_v1_collections">%1s/api/v1/collections</string>
+    <string name="api_v1_link">%1s//api/v1/links/%2s</string>
+    <string name="api_v1_public_link">%1s/api/v1/public/links/%2s</string>
+    <string name="api_v1_user_avatar">%1s/api/v1/avatar/%2s</string>
+    <string name="api_v1_dashboard">%1s/api/v1/dashboard</string>
+</resources>

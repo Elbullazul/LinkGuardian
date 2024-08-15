@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">LinkGuardian</string>
+    <string name="greeting">Hello there</string>
+    <string name="server_url">Server URL</string>
+    <string name="api_token">API Token</string>
+    <string name="server_url_placeholder">https://example.com</string>
+    <string name="api_token_placeholder">LinkWarden API token</string>
+    <string name="login">Log in</string>
+    <string name="server_unreachable">Error: server could not be reached</string>
+    <string name="could_not_authenticate">Error: unauthorized</string>
+</resources>
