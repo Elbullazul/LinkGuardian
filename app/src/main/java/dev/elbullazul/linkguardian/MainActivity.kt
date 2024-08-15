@@ -5,15 +5,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
+import dev.elbullazul.linkguardian.api.APIWrapper
 import dev.elbullazul.linkguardian.fragments.LoginFragment
+import dev.elbullazul.linkguardian.fragments.MainFragment
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 class MainActivity : ComponentActivity() {
@@ -41,24 +41,19 @@ fun InitContainer(modifier: Modifier = Modifier) {
     val savedUrl = sharedPref.getString(PREF_SERVER_URL, EMPTY_STRING)
     val savedToken = sharedPref.getString(PREF_API_TOKEN, EMPTY_STRING)
 
-    // TODO: re-enable once app is stable
-//    if (!savedUrl.isNullOrEmpty() && !savedToken.isNullOrEmpty()) {
-//        ShowToast(context, savedUrl + savedToken)
-//
-//        // TODO: load complete application
-//    }
-//    else {
-    LoginFragment(
-        modifier = modifier,
-        context = context
-    )
-//    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    LinkGuardianTheme {
-        InitContainer()
+    if (!savedUrl.isNullOrEmpty() && !savedToken.isNullOrEmpty()) {
+        val wrapper = APIWrapper(
+            context = context,
+            url = savedUrl,
+            token = savedToken
+        )
+        
+        MainFragment(wrapper = wrapper)
+    }
+    else {
+        LoginFragment(
+            modifier = modifier,
+            context = context
+        )
     }
 }

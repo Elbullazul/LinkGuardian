@@ -8,4 +8,6 @@
     <string name="login">Log in</string>
     <string name="server_unreachable">Error: server could not be reached</string>
     <string name="could_not_authenticate">Error: unauthorized</string>
+    <string name="no_description">No description</string>
+    <string name="links">Links</string>
 </resources>

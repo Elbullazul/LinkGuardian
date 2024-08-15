@@ -14,16 +14,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.elbullazul.linkguardian.EMPTY_STRING
+import dev.elbullazul.linkguardian.InitContainer
 import dev.elbullazul.linkguardian.PREFERENCES_KEY_FILE
 import dev.elbullazul.linkguardian.PREF_API_TOKEN
 import dev.elbullazul.linkguardian.PREF_SERVER_URL
 import dev.elbullazul.linkguardian.R
 import dev.elbullazul.linkguardian.ShowToast
 import dev.elbullazul.linkguardian.api.APIWrapper
+import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
 fun LoginFragment(context: Context, modifier: Modifier = Modifier) {
@@ -85,19 +89,12 @@ fun LoginButton(context: Context, modifier: Modifier, serverUrl: String, apiToke
             val wrapper = APIWrapper(context, serverUrl, apiToken)
 
             if (wrapper.serverReachable()) {
-                val response = wrapper.dashboardData()
-
-                println(response.message)
-                println(response.code)
-
-                if (response.isSuccessful) {
-                    println(wrapper.dashboardData().message)
+                try {
+                    wrapper.dashboardData()
 
                     persistUserData(context, serverUrl, apiToken)
-
-                    // TODO: navigate to dashboard view
                 }
-                else {
+                catch (e: Exception) {
                     ShowToast(context, invalidTokenMsg)
                 }
             }
@@ -117,5 +114,13 @@ fun persistUserData(context: Context, serverUrl: String, apiToken: String) {
         putString(PREF_SERVER_URL, serverUrl)
         putString(PREF_API_TOKEN, apiToken)
         apply()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginPreview() {
+    LinkGuardianTheme(darkTheme = true) {
+        LoginFragment(context = LocalContext.current)
     }
 }

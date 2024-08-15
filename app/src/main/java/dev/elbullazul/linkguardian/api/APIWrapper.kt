@@ -2,12 +2,12 @@ package dev.elbullazul.linkguardian.api
 
 import android.content.Context
 import dev.elbullazul.linkguardian.R
-import dev.elbullazul.linkguardian.api.objects.DashboardResponse
-import dev.elbullazul.linkguardian.api.objects.Link
+import dev.elbullazul.linkguardian.api.objects.ArrayResponse
 import kotlinx.serialization.json.Json
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.Response
 import okio.IOException
 
 class APIWrapper(
@@ -39,31 +39,46 @@ class APIWrapper(
         }
     }
 
-    fun dashboardData(): Response {
+    fun dashboardData(): ArrayResponse {
         try {
-            val testUrl = context.getString(R.string.api_v1_dashboard, url)
-            println(testUrl)
-
             val future = ResponseFuture()
             val request = Request.Builder()
-                .url(testUrl)
+                .url(context.getString(R.string.api_v1_dashboard, url))
                 .header("Authorization", "Bearer $token")
                 .build()
 
             client.newCall(request).enqueue(future)
 
-            val response = future.get()
-            // TODO: move to dashboard fragment when it's ready
-//            val json = response.body!!.string();
-//
-//            var dash = Json.decodeFromString<DashboardResponse>(json)
-//            println("First URL is ${dash.response[0].url}")
+            val json = future.get().body!!.string()
+            val data = Json.decodeFromString<ArrayResponse>(json)
 
-            return response
+            return data
         }
         catch (e: Exception) {
             println(e.message)
-            return Response.Builder().build()
+            return ArrayResponse()
+        }
+    }
+
+    fun linkData(cursor: Int = 0): ArrayResponse {
+        try {
+            // TODO: eventually migrate to HttpUrl.Builder
+            val future = ResponseFuture()
+            val request = Request.Builder()
+                .url(context.getString(R.string.api_v1_links, url) + "?cursor=$cursor")
+                .header("Authorization", "Bearer $token")
+                .build()
+
+            client.newCall(request).enqueue(future)
+
+            val json = future.get().body!!.string()
+            val data = Json.decodeFromString<ArrayResponse>(json)
+
+            return data
+        }
+        catch (e: Exception) {
+            println(e.message)
+            return ArrayResponse()
         }
     }
 }

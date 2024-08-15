@@ -3,6 +3,6 @@ package dev.elbullazul.linkguardian.api.objects
 import kotlinx.serialization.Serializable
 
 @Serializable
-class DashboardResponse(
-    var response: Array<Link>
+class ArrayResponse(
+    var response: Array<Link> = arrayOf()
 )
