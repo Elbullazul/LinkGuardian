@@ -8,9 +8,12 @@ An Android client for LinkWarden. Built with Kotlin and Jetpack compose.
 ### Features (work in progress)
 - [x] Login with API token
 - [x] Dark theme
-- [ ] Dashboard to display statistics and recent links
+- [ ] Browse links in the app
 - [ ] Manually add and edit links
 - [ ] Share target for quick sharing
+- [ ] Search
+- [ ] Offline mode
+- [ ] Open archived link copy
 
 ### Dependencies
 - OkHttp for making HTTP requests
