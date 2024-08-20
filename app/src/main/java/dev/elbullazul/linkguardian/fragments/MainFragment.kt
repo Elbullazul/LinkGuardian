@@ -2,6 +2,7 @@ package dev.elbullazul.linkguardian.fragments
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -25,9 +26,7 @@ import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 fun MainFragment(wrapper: APIWrapper) {
     // TODO: top bar and bottom bar for navigation
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
+        modifier = Modifier.fillMaxSize()
     ) {
         TopAppBar(
             title = {
@@ -37,14 +36,14 @@ fun MainFragment(wrapper: APIWrapper) {
 
         LinkList(wrapper = wrapper)
 
-        BottomAppBar {
-            NavigationBarItem(
-                icon = { Icon(Icons.Filled.Home, contentDescription = stringResource(id = R.string.links)) },
-                label = { Text(text = stringResource(id = R.string.links)) },
-                selected = true,
-                onClick = {}
-            )
-        }
+//        BottomAppBar {
+//            NavigationBarItem(
+//                icon = { Icon(Icons.Filled.Home, contentDescription = stringResource(id = R.string.links)) },
+//                label = { Text(text = stringResource(id = R.string.links)) },
+//                selected = true,
+//                onClick = {}
+//            )
+//        }
     }
 }
 
