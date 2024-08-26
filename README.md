@@ -8,7 +8,7 @@ An Android client for [Linkwarden](https://github.com/linkwarden/linkwarden). Bu
 ### Features (work in progress)
 - [x] Login with API token
 - [x] Dark theme
-- [ ] Browse links in the app
+- [x] Browse links in the app
 - [ ] Manually add and edit links
 - [ ] Share target for quick sharing
 - [ ] Search
