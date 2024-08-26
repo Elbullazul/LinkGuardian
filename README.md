@@ -1,5 +1,5 @@
 # LinGuardian
-An Android client for LinkWarden. Built with Kotlin and Jetpack compose.
+An Android client for [Linkwarden](https://github.com/linkwarden/linkwarden). Built with Kotlin and Jetpack compose.
 
 | Light theme | Dark theme |
 | --- | --- |
