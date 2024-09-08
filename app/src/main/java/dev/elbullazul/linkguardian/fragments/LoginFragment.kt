@@ -3,10 +3,12 @@ package dev.elbullazul.linkguardian.fragments
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -19,28 +21,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dev.elbullazul.linkguardian.EMPTY_STRING
-import dev.elbullazul.linkguardian.PREFERENCES_KEY_FILE
-import dev.elbullazul.linkguardian.PREF_API_TOKEN
-import dev.elbullazul.linkguardian.PREF_SERVER_URL
 import dev.elbullazul.linkguardian.R
 import dev.elbullazul.linkguardian.ShowToast
-import dev.elbullazul.linkguardian.api.APIWrapper
+import dev.elbullazul.linkguardian.api.DOMAIN_UNREACHABLE
+import dev.elbullazul.linkguardian.api.INVALID_DOMAIN
+import dev.elbullazul.linkguardian.api.LinkwardenAPI
+import dev.elbullazul.linkguardian.api.SUCCESS
+import dev.elbullazul.linkguardian.storage.PreferencesManager
+import dev.elbullazul.linkguardian.storage.SCHEME_HTTP
+import dev.elbullazul.linkguardian.storage.SCHEME_HTTPS
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
-// TODO: rework
 @Composable
-fun LoginFragment() {
+fun LoginFragment(onLogin: () -> Unit) {
     val context = LocalContext.current
-
-    // temporary, to facilitate testing. Once app is ready, redirect to dashboard instead
-    val sharedPref =
-        context.getSharedPreferences(PREFERENCES_KEY_FILE, Context.MODE_PRIVATE) ?: return
-    val savedUrl = sharedPref.getString(PREF_SERVER_URL, EMPTY_STRING)!!.toString()
-    val savedToken = sharedPref.getString(PREF_API_TOKEN, EMPTY_STRING)!!.toString()
-
-    val serverUrl = remember { mutableStateOf(savedUrl) }
-    val apiToken = remember { mutableStateOf(savedToken) }
+    val preferencesManager = PreferencesManager(context)
+    val serverUrl = remember { mutableStateOf(preferencesManager.domain) }
+    val apiToken = remember { mutableStateOf(preferencesManager.token) }
+    val useHttps = remember { mutableStateOf(true) }
 
     Column(
         modifier = Modifier
@@ -57,65 +55,63 @@ fun LoginFragment() {
         )
         TextField(
             singleLine = true,
-            modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 5.dp),
             value = serverUrl.value,
-            onValueChange = { serverUrl.value = it },
+            onValueChange = {  serverUrl.value = it },
             placeholder = { Text(stringResource(id = R.string.server_url_placeholder)) },
             label = { Text(stringResource(id = R.string.server_url)) }
         )
         TextField(
             singleLine = true,
-            modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 5.dp),
             value = apiToken.value,
             placeholder = { Text(stringResource(id = R.string.api_token_placeholder)) },
-            onValueChange = { apiToken.value = it },
+            onValueChange = {  apiToken.value = it },
             label = { Text(stringResource(id = R.string.api_token)) }
         )
-        LoginButton(
-            context = context,
-            modifier = Modifier.padding(vertical = 10.dp),
-            serverUrl = serverUrl.value,
-            apiToken = apiToken.value
-        )
-    }
-}
-
-@Composable
-fun LoginButton(context: Context, modifier: Modifier, serverUrl: String, apiToken: String) {
-    val unreachableMsg = stringResource(id = R.string.server_unreachable)
-    val invalidTokenMsg = stringResource(id = R.string.could_not_authenticate)
-
-    Button(
-        modifier = modifier,
-        onClick = {
-            val wrapper = APIWrapper(context, serverUrl, apiToken)
-
-            if (wrapper.serverReachable()) {
-                try {
-                    wrapper.dashboardData()
-
-                    persistUserData(context, serverUrl, apiToken)
-                }
-                catch (e: Exception) {
-                    ShowToast(context, invalidTokenMsg)
-                }
-            }
-            else {
-                ShowToast(context, unreachableMsg)
-            }
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = true,
+                onCheckedChange = { useHttps.value = it }
+            )
+            Text(text = "Use HTTPS")
         }
-    ) {
-        Text(stringResource(id = R.string.login))
-    }
-}
+        Button(
+            modifier = Modifier.padding(vertical = 10.dp),
+            onClick = {
+                preferencesManager.domain = serverUrl.value
+                preferencesManager.token = apiToken.value
+                preferencesManager.scheme = if (useHttps.value) { SCHEME_HTTPS } else { SCHEME_HTTP }
 
-fun persistUserData(context: Context, serverUrl: String, apiToken: String) {
-    val sharedPref = context.getSharedPreferences(PREFERENCES_KEY_FILE, Context.MODE_PRIVATE) ?: return
+                val apiWrapper = LinkwardenAPI(
+                    preferencesManager.domain,
+                    preferencesManager.token,
+                    preferencesManager.scheme
+                )
+                val ret = apiWrapper.connect()
 
-    with(sharedPref.edit()) {
-        putString(PREF_SERVER_URL, serverUrl)
-        putString(PREF_API_TOKEN, apiToken)
-        apply()
+                when (ret) {
+                    SUCCESS -> {
+                        preferencesManager.persist()
+                        onLogin()
+                    }
+                    INVALID_DOMAIN -> {
+                        ShowToast(context, context.getString(R.string.illegal_domain))
+                    }
+                    DOMAIN_UNREACHABLE -> {
+                        ShowToast(context, context.getString(R.string.server_unreachable))
+                    }
+                }
+            }
+        ) {
+            Text(stringResource(id = R.string.login))
+        }
     }
 }
 
@@ -123,6 +119,6 @@ fun persistUserData(context: Context, serverUrl: String, apiToken: String) {
 @Composable
 fun LoginPreview() {
     LinkGuardianTheme(darkTheme = true) {
-        LoginFragment()
+        LoginFragment(onLogin = {})
     }
 }

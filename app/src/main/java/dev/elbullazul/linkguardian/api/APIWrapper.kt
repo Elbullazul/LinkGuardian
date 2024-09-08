@@ -4,8 +4,6 @@ import android.content.Context
 import dev.elbullazul.linkguardian.R
 import dev.elbullazul.linkguardian.api.objects.ArrayResponse
 import kotlinx.serialization.json.Json
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okio.IOException

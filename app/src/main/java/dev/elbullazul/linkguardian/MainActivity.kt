@@ -1,6 +1,5 @@
 package dev.elbullazul.linkguardian
 
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,12 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.rememberNavController
-import dev.elbullazul.linkguardian.api.APIWrapper
-import dev.elbullazul.linkguardian.fragments.LoginFragment
 import dev.elbullazul.linkguardian.navigation.AppNavController
 import dev.elbullazul.linkguardian.navigation.DASHBOARD
 import dev.elbullazul.linkguardian.navigation.LOGIN_SCREEN
 import dev.elbullazul.linkguardian.navigation.destinations
+import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 class MainActivity : ComponentActivity() {
@@ -40,20 +38,17 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App() {
-    val context = LocalContext.current
-    val sharedPref =
-        context.getSharedPreferences(PREFERENCES_KEY_FILE, Context.MODE_PRIVATE) ?: return
-    val savedUrl = sharedPref.getString(PREF_SERVER_URL, EMPTY_STRING)!!.toString()
-    val savedToken = sharedPref.getString(PREF_API_TOKEN, EMPTY_STRING)!!.toString()
-
     var startDestination = LOGIN_SCREEN
 
-    if (savedUrl.isNotEmpty() && savedToken.isNotEmpty()) {
-        // TODO: validate URL and token
+    val context = LocalContext.current
+    val prefs = PreferencesManager(context)
+    val navController = rememberNavController()
+
+    if (prefs.load()) {
+        // TODO: validate that values are still valid
+
         startDestination = DASHBOARD
     }
-
-    val navController = rememberNavController()
 
     LinkGuardianTheme {
         Scaffold(
@@ -61,19 +56,19 @@ fun App() {
                 TopAppBar(title = { Text(text = stringResource(id = R.string.app_name)) })
             },
             bottomBar = {
+                // TODO: make check dynamic
                 if (startDestination != LOGIN_SCREEN) {
                     BottomAppBar {
                         for (dest in destinations) {
                             NavigationBarItem(
                                 selected = false,
-                                onClick = { /*TODO*/ },
+                                onClick = { navController.navigate(dest.route) },
                                 icon = { dest.icon },
                                 label = { Text(text = dest.label) }
                             )
                         }
                     }
                 }
-                else { null }
             },
             modifier = Modifier.fillMaxSize()
         ) { innerPadding ->

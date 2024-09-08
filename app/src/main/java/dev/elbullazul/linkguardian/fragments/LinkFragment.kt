@@ -1,17 +1,13 @@
 package dev.elbullazul.linkguardian.fragments
 
-import android.content.Context
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import dev.elbullazul.linkguardian.api.APIWrapper
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,12 +17,9 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import dev.elbullazul.linkguardian.R
-import dev.elbullazul.linkguardian.api.objects.Id
 import dev.elbullazul.linkguardian.api.objects.Link
 import dev.elbullazul.linkguardian.api.objects.Collection
-import dev.elbullazul.linkguardian.api.objects.Tag
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
@@ -62,8 +55,11 @@ fun LinkFragment(link: Link) {
             Text(
                 text = link.description.ifEmpty { stringResource(id = R.string.no_description) },
             )
-
-            // TODO: display tags, maybe collection?
+            Row {
+                Text(text = "tag 1")
+                Text(text = "tag 2")
+                Text(text = "tag 3")
+            }
         }
     }
 }
@@ -90,7 +86,7 @@ fun LinkCardPreview() {
                 importDate = null,
                 createdAt = "yesterday",
                 updatedAt = "now",
-                tags = arrayOf<Tag>(),
+                tags = arrayOf(),
                 collection = Collection(
                     id = 0,
                     name = "Nameless collection",
@@ -102,7 +98,7 @@ fun LinkCardPreview() {
                     createdAt = "now",
                     updatedAt = "now"
                 ),
-                pinnedBy = arrayOf<Id>()
+                pinnedBy = arrayOf()
             )
         )
     }
