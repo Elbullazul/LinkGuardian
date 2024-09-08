@@ -20,7 +20,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.elbullazul.linkguardian.EMPTY_STRING
-import dev.elbullazul.linkguardian.InitContainer
 import dev.elbullazul.linkguardian.PREFERENCES_KEY_FILE
 import dev.elbullazul.linkguardian.PREF_API_TOKEN
 import dev.elbullazul.linkguardian.PREF_SERVER_URL
@@ -29,8 +28,11 @@ import dev.elbullazul.linkguardian.ShowToast
 import dev.elbullazul.linkguardian.api.APIWrapper
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
+// TODO: rework
 @Composable
-fun LoginFragment(context: Context, modifier: Modifier = Modifier) {
+fun LoginFragment() {
+    val context = LocalContext.current
+
     // temporary, to facilitate testing. Once app is ready, redirect to dashboard instead
     val sharedPref =
         context.getSharedPreferences(PREFERENCES_KEY_FILE, Context.MODE_PRIVATE) ?: return
@@ -41,7 +43,7 @@ fun LoginFragment(context: Context, modifier: Modifier = Modifier) {
     val apiToken = remember { mutableStateOf(savedToken) }
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .padding(horizontal = 35.dp)
             .fillMaxWidth()
             .fillMaxHeight(),
@@ -121,6 +123,6 @@ fun persistUserData(context: Context, serverUrl: String, apiToken: String) {
 @Composable
 fun LoginPreview() {
     LinkGuardianTheme(darkTheme = true) {
-        LoginFragment(context = LocalContext.current)
+        LoginFragment()
     }
 }

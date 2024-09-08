@@ -52,6 +52,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.navigation.compose)
     implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.okhttp)
