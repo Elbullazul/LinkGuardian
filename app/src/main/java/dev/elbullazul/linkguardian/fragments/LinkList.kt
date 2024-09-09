@@ -12,8 +12,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -24,18 +22,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.elbullazul.linkguardian.API_CURSOR_SIZE
-import dev.elbullazul.linkguardian.api.APIWrapper
+import dev.elbullazul.linkguardian.api.API_CURSOR_SIZE
+import dev.elbullazul.linkguardian.api.LinkwardenAPI
 import dev.elbullazul.linkguardian.api.objects.Link
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun LinkList(wrapper: APIWrapper) {
+fun LinkList() {
     val page = remember { mutableIntStateOf(0) }
     val loading = remember { mutableStateOf(false) }
     val itemList = remember { mutableStateListOf<Link>() }
     val listState = rememberLazyListState()
+    val apiWrapper = LinkwardenAPI(LocalContext.current)
 
     LazyColumn(
         state = listState,
@@ -61,12 +60,12 @@ fun LinkList(wrapper: APIWrapper) {
 
     LaunchedEffect(key1 = page.intValue) {
         loading.value = true
-        itemList.addAll(wrapper.linkData(page.intValue * API_CURSOR_SIZE).response)
+        itemList.addAll(apiWrapper.getLinks(page.intValue * API_CURSOR_SIZE).response)
         loading.value = false
     }
 
     LaunchedEffect(listState) {
-        snapshotFlow {listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
             .collectLatest { index ->
                 if (!loading.value && index != null && index >= itemList.size - 5) {
                     page.intValue++
@@ -79,8 +78,6 @@ fun LinkList(wrapper: APIWrapper) {
 @Composable
 fun LinkListPreview() {
     LinkGuardianTheme {
-        LinkList(
-            wrapper = APIWrapper(LocalContext.current, "","")
-        )
+        LinkList()
     }
 }

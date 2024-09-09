@@ -7,8 +7,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
@@ -18,11 +22,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.rememberNavController
+import dev.elbullazul.linkguardian.api.LinkwardenAPI
+import dev.elbullazul.linkguardian.api.SUCCESS
 import dev.elbullazul.linkguardian.navigation.AppNavController
-import dev.elbullazul.linkguardian.navigation.DASHBOARD
-import dev.elbullazul.linkguardian.navigation.LOGIN_SCREEN
+import dev.elbullazul.linkguardian.navigation.ROUTE_DASHBOARD
+import dev.elbullazul.linkguardian.navigation.ROUTE_LOGIN
+import dev.elbullazul.linkguardian.navigation.ROUTE_ADD_LINK
 import dev.elbullazul.linkguardian.navigation.destinations
-import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 class MainActivity : ComponentActivity() {
@@ -38,17 +44,14 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App() {
-    var startDestination = LOGIN_SCREEN
+    var startDestination = ROUTE_LOGIN
 
     val context = LocalContext.current
-    val prefs = PreferencesManager(context)
+    val apiWrapper = LinkwardenAPI(context)
     val navController = rememberNavController()
 
-    if (prefs.load()) {
-        // TODO: validate that values are still valid
-
-        startDestination = DASHBOARD
-    }
+    if (apiWrapper.connect() == SUCCESS)
+        startDestination = ROUTE_DASHBOARD
 
     LinkGuardianTheme {
         Scaffold(
@@ -57,16 +60,25 @@ fun App() {
             },
             bottomBar = {
                 // TODO: make check dynamic
-                if (startDestination != LOGIN_SCREEN) {
+                if (startDestination != ROUTE_LOGIN) {
                     BottomAppBar {
                         for (dest in destinations) {
                             NavigationBarItem(
-                                selected = false,
+                                selected = true, // TODO: route is null when running this part: (navController.currentDestination?.route == dest.route)
                                 onClick = { navController.navigate(dest.route) },
-                                icon = { dest.icon },
-                                label = { Text(text = dest.label) }
+                                icon = { Icon(imageVector = dest.icon, contentDescription = "") },
+                                label = { Text(text = stringResource(id = dest.label)) }
                             )
                         }
+                    }
+                }
+            },
+            floatingActionButton = {
+                if (startDestination != ROUTE_LOGIN) {
+                    FloatingActionButton(
+                        onClick = { navController.navigate(ROUTE_ADD_LINK) },
+                    ) {
+                        Icon(Icons.Filled.Add, "")
                     }
                 }
             },

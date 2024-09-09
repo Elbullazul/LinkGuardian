@@ -1,40 +1,49 @@
 package dev.elbullazul.linkguardian.api
 
 import android.content.Context
+import dev.elbullazul.linkguardian.R
+import dev.elbullazul.linkguardian.api.objects.ArrayResponse
 import dev.elbullazul.linkguardian.storage.PreferencesManager
+import kotlinx.serialization.json.Json
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
-const val SUCCESS = 0
-const val INVALID_DOMAIN = 1
-const val DOMAIN_UNREACHABLE = 2
-const val TOKEN_INVALID = 3
-
+// TODO: if no arguments are received, loadFromPreferences should be called?
 class LinkwardenAPI(
-    private var domain: String,
-    private var token: String,
-    private var scheme: String,
+    private var context: Context,
+    private var domain: String = "",
+    private var token: String = "",
+    private var scheme: String = "",
     private val client: OkHttpClient = OkHttpClient()
 ) {
-    fun loadFromPreferences(context: Context) {
+    init {
+        if (domain.isEmpty() && token.isEmpty() && scheme.isEmpty())
+            loadFromPreferences()
+    }
+
+    private fun loadFromPreferences(): Boolean {
         val prefs = PreferencesManager(context)
+
+        if (!prefs.load())
+            return false;
 
         domain = prefs.domain
         token = prefs.token
         scheme = prefs.scheme
+
+        return true
     }
 
     fun connect(): Int {
         try {
             val future = ResponseFuture()
-//            val url = HttpUrl.Builder()
-//                .scheme(scheme)
-//                .host(domain)
-//                .build()
-
+            val url = HttpUrl.Builder()
+                .scheme(scheme)
+                .host(domain)
+                .build()
             val request = Request.Builder()
-                .url("$scheme://$domain")
+                .url(url)
                 .header("Authorization", "Bearer $token")
                 .build()
 
@@ -51,5 +60,58 @@ class LinkwardenAPI(
         }
 
         return SUCCESS
+    }
+
+    fun getDashboard(): ArrayResponse {
+        try {
+            val future = ResponseFuture()
+            val url = HttpUrl.Builder()
+                .scheme(scheme)
+                .host(domain)
+                .addPathSegments(context.getString(R.string.api_v1_dashboard))
+                .build()
+            val request = Request.Builder()
+                .url(url)
+                .header("Authorization", "Bearer $token")
+                .build()
+
+            client.newCall(request).enqueue(future)
+
+            val json = future.get().body!!.string()
+            val data = Json.decodeFromString<ArrayResponse>(json)
+
+            return data
+        }
+        catch (e: Exception) {
+            println(e.message)
+            return ArrayResponse()
+        }
+    }
+
+    fun getLinks(cursor: Int = 0): ArrayResponse {
+        try {
+            val future = ResponseFuture()
+            val url = HttpUrl.Builder()
+                .scheme(scheme)
+                .host(domain)
+                .addPathSegments(context.getString(R.string.api_v1_links))
+                .addQueryParameter("cursor", cursor.toString())
+                .build()
+            val request = Request.Builder()
+                .url(url)
+                .header("Authorization", "Bearer $token")
+                .build()
+
+            client.newCall(request).enqueue(future)
+
+            val json = future.get().body!!.string()
+            val data = Json.decodeFromString<ArrayResponse>(json)
+
+            return data
+        }
+        catch (e: Exception) {
+            println(e.message)
+            return ArrayResponse()
+        }
     }
 }

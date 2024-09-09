@@ -1,6 +1,5 @@
 package dev.elbullazul.linkguardian.fragments
 
-import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,11 +21,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.elbullazul.linkguardian.R
-import dev.elbullazul.linkguardian.ShowToast
 import dev.elbullazul.linkguardian.api.DOMAIN_UNREACHABLE
 import dev.elbullazul.linkguardian.api.INVALID_DOMAIN
-import dev.elbullazul.linkguardian.api.LinkwardenAPI
 import dev.elbullazul.linkguardian.api.SUCCESS
+import dev.elbullazul.linkguardian.api.LinkwardenAPI
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.storage.SCHEME_HTTP
 import dev.elbullazul.linkguardian.storage.SCHEME_HTTPS
@@ -36,6 +34,8 @@ import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 fun LoginFragment(onLogin: () -> Unit) {
     val context = LocalContext.current
     val preferencesManager = PreferencesManager(context)
+    preferencesManager.load()
+
     val serverUrl = remember { mutableStateOf(preferencesManager.domain) }
     val apiToken = remember { mutableStateOf(preferencesManager.token) }
     val useHttps = remember { mutableStateOf(true) }
@@ -90,6 +90,7 @@ fun LoginFragment(onLogin: () -> Unit) {
                 preferencesManager.scheme = if (useHttps.value) { SCHEME_HTTPS } else { SCHEME_HTTP }
 
                 val apiWrapper = LinkwardenAPI(
+                    context,
                     preferencesManager.domain,
                     preferencesManager.token,
                     preferencesManager.scheme

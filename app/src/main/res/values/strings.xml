@@ -11,4 +11,6 @@
     <string name="illegal_domain">Error: the specified domain is not valid</string>
     <string name="no_description">No description</string>
     <string name="links">Links</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="settings">Settings</string>
 </resources>
