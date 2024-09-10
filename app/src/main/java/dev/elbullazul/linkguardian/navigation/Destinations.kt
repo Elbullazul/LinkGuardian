@@ -10,7 +10,7 @@ import dev.elbullazul.linkguardian.R
 const val ROUTE_DASHBOARD = "dashboard"
 const val ROUTE_LOGIN = "login"
 const val ROUTE_SETTINGS = "settings"
-const val ROUTE_ADD_LINK = "add_link"
+const val ROUTE_SUBMIT_LINK = "add_link"
 
 class Destination(
     val label: Int,

@@ -27,7 +27,7 @@ import dev.elbullazul.linkguardian.api.SUCCESS
 import dev.elbullazul.linkguardian.navigation.AppNavController
 import dev.elbullazul.linkguardian.navigation.ROUTE_DASHBOARD
 import dev.elbullazul.linkguardian.navigation.ROUTE_LOGIN
-import dev.elbullazul.linkguardian.navigation.ROUTE_ADD_LINK
+import dev.elbullazul.linkguardian.navigation.ROUTE_SUBMIT_LINK
 import dev.elbullazul.linkguardian.navigation.destinations
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
@@ -76,7 +76,7 @@ fun App() {
             floatingActionButton = {
                 if (startDestination != ROUTE_LOGIN) {
                     FloatingActionButton(
-                        onClick = { navController.navigate(ROUTE_ADD_LINK) },
+                        onClick = { navController.navigate(ROUTE_SUBMIT_LINK) },
                     ) {
                         Icon(Icons.Filled.Add, "")
                     }

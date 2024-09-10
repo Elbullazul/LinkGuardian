@@ -13,4 +13,8 @@
     <string name="links">Links</string>
     <string name="dashboard">Dashboard</string>
     <string name="settings">Settings</string>
+    <string name="link_url">Link URL</string>
+    <string name="collection">Collection</string>
+    <string name="tags">Tags</string>
+    <string name="submit">Submit</string>
 </resources>

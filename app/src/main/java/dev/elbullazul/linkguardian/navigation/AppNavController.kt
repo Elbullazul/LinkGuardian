@@ -9,6 +9,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import dev.elbullazul.linkguardian.fragments.LinkList
 import dev.elbullazul.linkguardian.fragments.LoginFragment
+import dev.elbullazul.linkguardian.fragments.SubmitLinkFragment
+import dev.elbullazul.linkguardian.fragments.SubmitLinkPreview
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 
 @Composable
@@ -29,10 +31,8 @@ fun AppNavController(navController: NavHostController, startDestination: String)
             )
         }
         composable(ROUTE_SETTINGS) { /* TODO: call settings screen when implemented */ }
-        composable(ROUTE_ADD_LINK) {
-            Column {
-                Text(text = "Coming soon")
-            }
+        composable(ROUTE_SUBMIT_LINK) {
+            SubmitLinkFragment()
         }
     }
 }
