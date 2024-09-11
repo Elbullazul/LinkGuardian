@@ -1,4 +1,4 @@
-# LinGuardian
+# LinkGuardian
 An Android client for [Linkwarden](https://github.com/linkwarden/linkwarden). Built with Kotlin and Jetpack compose.
 
 | Light theme | Dark theme |
