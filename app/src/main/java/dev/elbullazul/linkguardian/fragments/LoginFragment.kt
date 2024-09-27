@@ -80,7 +80,7 @@ fun LoginFragment(onLogin: () -> Unit) {
                 checked = true,
                 onCheckedChange = { useHttps.value = it }
             )
-            Text(text = "Use HTTPS")
+            Text(text = stringResource(R.string.use_https))
         }
         Button(
             modifier = Modifier.padding(vertical = 10.dp),

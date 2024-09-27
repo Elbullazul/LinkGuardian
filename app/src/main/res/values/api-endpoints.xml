@@ -12,4 +12,5 @@
     <string name="api_v1_public_link">api/v1/public/links/%1s</string>
     <string name="api_v1_user_avatar">api/v1/avatar/%1s</string>
     <string name="api_v1_dashboard">api/v1/dashboard</string>
+    <string name="api_v2_dashboard">api/v2/dashboard</string>
 </resources>

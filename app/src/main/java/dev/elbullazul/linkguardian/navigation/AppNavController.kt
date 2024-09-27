@@ -1,7 +1,5 @@
 package dev.elbullazul.linkguardian.navigation
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
@@ -9,8 +7,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import dev.elbullazul.linkguardian.fragments.LinkList
 import dev.elbullazul.linkguardian.fragments.LoginFragment
+import dev.elbullazul.linkguardian.fragments.SettingsFragment
 import dev.elbullazul.linkguardian.fragments.SubmitLinkFragment
-import dev.elbullazul.linkguardian.fragments.SubmitLinkPreview
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 
 @Composable
@@ -30,7 +28,11 @@ fun AppNavController(navController: NavHostController, startDestination: String)
                 onLogin = { navController.navigate(ROUTE_DASHBOARD) }
             )
         }
-        composable(ROUTE_SETTINGS) { /* TODO: call settings screen when implemented */ }
+        composable(ROUTE_SETTINGS) {
+            SettingsFragment(
+                onLogout = { navController.navigate(ROUTE_LOGIN) }
+            )
+        }
         composable(ROUTE_SUBMIT_LINK) {
             SubmitLinkFragment()
         }

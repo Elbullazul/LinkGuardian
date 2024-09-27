@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.material3.Text
@@ -26,15 +27,21 @@ import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 fun LinkFragment(link: Link) {
     val uriHandler = LocalUriHandler.current
 
+    val linkDescription = if (link.description.length > 150)
+            link.description.substring(0,150) + "..."
+        else
+            link.description
+
     val annotatedString = buildAnnotatedString {
         append(link.name)
         addStyle(
             style = SpanStyle(
-                color = Color.hsl(208f, 1f, 0.45f),
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
                 textDecoration = TextDecoration.Underline
             ),
             start = 0,
-            end = link.name.length)
+            end = link.name.length
+        )
     }
 
     Card(
@@ -53,13 +60,13 @@ fun LinkFragment(link: Link) {
                 // TODO: annotation for link
             )
             Text(
-                text = link.description.ifEmpty { stringResource(id = R.string.no_description) },
+                text = linkDescription.ifEmpty { stringResource(id = R.string.no_description) },
             )
-            Row {
-                Text(text = "tag 1")
-                Text(text = "tag 2")
-                Text(text = "tag 3")
-            }
+//            Row {
+//                Text(text = "tag 1")
+//                Text(text = "tag 2")
+//                Text(text = "tag 3")
+//            }
         }
     }
 }

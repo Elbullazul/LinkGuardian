@@ -36,8 +36,9 @@ class LinkwardenAPI(
     }
 
     fun connect(): Int {
+        val future = ResponseFuture()
+
         try {
-            val future = ResponseFuture()
             val url = HttpUrl.Builder()
                 .scheme(scheme)
                 .host(domain)
@@ -49,13 +50,17 @@ class LinkwardenAPI(
 
             client.newCall(request).enqueue(future)
 
-            if (!future.get().isSuccessful)
+            future.get().close()
+
+            if (!future.get().isSuccessful) {
                 return TOKEN_INVALID
+            }
         }
         catch (e: IllegalArgumentException) {
             return INVALID_DOMAIN
         }
         catch (e: Exception) {
+            println(e.message)
             return DOMAIN_UNREACHABLE
         }
 
@@ -68,7 +73,7 @@ class LinkwardenAPI(
             val url = HttpUrl.Builder()
                 .scheme(scheme)
                 .host(domain)
-                .addPathSegments(context.getString(R.string.api_v1_dashboard))
+                .addPathSegments(context.getString(R.string.api_v2_dashboard))
                 .build()
             val request = Request.Builder()
                 .url(url)

@@ -17,4 +17,10 @@
     <string name="collection">Collection</string>
     <string name="tags">Tags</string>
     <string name="submit">Submit</string>
+    <string name="oled_theme">OLED theme</string>
+    <string name="logout">Log out</string>
+    <string name="logged_out">Logged out</string>
+    <string name="connected_to_server">Connected to server</string>
+    <string name="missing_feature">Not yet available</string>
+    <string name="use_https">Use HTTPS</string>
 </resources>

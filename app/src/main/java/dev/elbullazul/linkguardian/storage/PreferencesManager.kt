@@ -37,4 +37,16 @@ class PreferencesManager(
             apply()
         }
     }
+
+    fun clear() {
+        val preferences =
+            context.getSharedPreferences(PREFERENCES_KEY_FILE, Context.MODE_PRIVATE)
+        with(preferences.edit()) {
+
+            remove(PREF_DOMAIN)
+            remove(PREF_TOKEN)
+            remove(PREF_SCHEME)
+            commit()
+        }
+    }
 }
