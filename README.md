@@ -9,9 +9,10 @@ An Android client for [Linkwarden](https://github.com/linkwarden/linkwarden). Bu
 - [x] Login with API token
 - [x] Dark theme
 - [x] Browse links in the app
-- [ ] Manually add and edit links
+- [x] Add links
 - [ ] Share target for quick sharing
 - [ ] Search
+- [ ] Edit links
 - [ ] Offline mode
 - [ ] Open archived link copy
 
