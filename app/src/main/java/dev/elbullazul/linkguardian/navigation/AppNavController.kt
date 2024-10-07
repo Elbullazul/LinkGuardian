@@ -34,7 +34,9 @@ fun AppNavController(navController: NavHostController, startDestination: String)
             )
         }
         composable(ROUTE_SUBMIT_LINK) {
-            SubmitLinkFragment()
+            SubmitLinkFragment(
+                onSubmit = { navController.navigate(ROUTE_DASHBOARD) }
+            )
         }
     }
 }
