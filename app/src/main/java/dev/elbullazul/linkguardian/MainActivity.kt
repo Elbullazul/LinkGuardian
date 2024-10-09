@@ -28,14 +28,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import dev.elbullazul.linkguardian.api.LinkwardenAPI
-import dev.elbullazul.linkguardian.api.SUCCESS
 import dev.elbullazul.linkguardian.navigation.AppNavController
 import dev.elbullazul.linkguardian.navigation.ROUTE_DASHBOARD
 import dev.elbullazul.linkguardian.navigation.ROUTE_LOGIN
 import dev.elbullazul.linkguardian.navigation.ROUTE_SETTINGS
 import dev.elbullazul.linkguardian.navigation.ROUTE_SUBMIT_LINK
 import dev.elbullazul.linkguardian.navigation.destinations
+import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 class MainActivity : ComponentActivity() {
@@ -52,7 +51,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun App() {
     val context = LocalContext.current
-    val apiWrapper = LinkwardenAPI(context)
+    val prefs = PreferencesManager(context)
     val navController = rememberNavController()
 
     val loggedIn = rememberSaveable { (mutableStateOf(false)) }
@@ -84,7 +83,7 @@ fun App() {
         }
     }
 
-    if (apiWrapper.connect() == SUCCESS)
+    if (prefs.load())
         loggedIn.value = true
 
     LinkGuardianTheme {
@@ -95,9 +94,7 @@ fun App() {
                     navigationIcon = {
                         if (displayBackButton.value) {
                             IconButton(
-                                onClick = {
-                                    navController.popBackStack()
-                                }
+                                onClick = { navController.popBackStack() }
                             ) {
                                 Icon(Icons.AutoMirrored.Filled.ArrowBack, "Go back")
                             }
