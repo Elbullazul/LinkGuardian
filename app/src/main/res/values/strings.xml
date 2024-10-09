@@ -26,4 +26,11 @@
     <string name="link_submit_success">Link was added successfully</string>
     <string name="link_submit_failed">Submission failed (see logs for details)</string>
     <string name="tags_placeholder">Tags separated by spaces</string>
+    <string name="collection_select">Choose a collection</string>
+    <string name="select">Select</string>
+    <string name="cancel">Cancel</string>
+    <string name="autogenerate_if_empty">Leave empty to auto-fetch</string>
+    <string name="name">Name</string>
+    <string name="description">Description</string>
+    <string name="description_placeholder">Notes, thought, etc.</string>
 </resources>
