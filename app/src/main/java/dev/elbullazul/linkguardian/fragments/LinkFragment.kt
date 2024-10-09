@@ -1,5 +1,7 @@
 package dev.elbullazul.linkguardian.fragments
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,12 +23,14 @@ import androidx.compose.ui.unit.dp
 import dev.elbullazul.linkguardian.R
 import dev.elbullazul.linkguardian.api.objects.Link
 import dev.elbullazul.linkguardian.api.objects.Collection
+import dev.elbullazul.linkguardian.api.objects.Tag
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
 fun LinkFragment(link: Link) {
     val uriHandler = LocalUriHandler.current
 
+    // trim description to 150 characters
     val linkDescription = if (link.description.length > 150)
             link.description.substring(0,150) + "..."
         else
@@ -57,16 +61,19 @@ fun LinkFragment(link: Link) {
         ) {
             Text(
                 text = annotatedString,
-                // TODO: annotation for link
             )
             Text(
                 text = linkDescription.ifEmpty { stringResource(id = R.string.no_description) },
             )
-//            Row {
-//                Text(text = "tag 1")
-//                Text(text = "tag 2")
-//                Text(text = "tag 3")
-//            }
+            Row {
+                for (tag in link.tags) {
+                    Text(
+                        modifier = Modifier.padding(top = 7.dp, end = 12.dp),
+                        color = MaterialTheme.colorScheme.tertiary,
+                        text = tag.name
+                    )
+                }
+            }
         }
     }
 }
@@ -75,6 +82,10 @@ fun LinkFragment(link: Link) {
 @Composable
 fun LinkCardPreview() {
     LinkGuardianTheme(darkTheme = true) {
+        var testTags: Array<Tag> = arrayOf()
+        testTags += Tag(id = 0, ownerId = 0, createdAt = "yesterday", updatedAt = "now", name = "Test tag 1")
+        testTags += Tag(id = 0, ownerId = 0, createdAt = "yesterday", updatedAt = "now", name = "Test tag 2")
+
         LinkFragment(
             link = Link(
                 id = 0,
@@ -93,7 +104,7 @@ fun LinkCardPreview() {
                 importDate = null,
                 createdAt = "yesterday",
                 updatedAt = "now",
-                tags = arrayOf(),
+                tags = testTags,
                 collection = Collection(
                     id = 0,
                     name = "Nameless collection",

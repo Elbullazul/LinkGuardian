@@ -25,10 +25,13 @@ import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
 fun SettingsFragment(onLogout: () -> Unit) {
-    Column(modifier = Modifier.fillMaxSize().padding(10.dp, 15.dp)) {
-        val context = LocalContext.current
-        var checked by remember { mutableStateOf(true) }
+    val context = LocalContext.current
+    val prefs = PreferencesManager(context)
+    var oledEnabled by remember { mutableStateOf(true) }
 
+    prefs.load()
+
+    Column(modifier = Modifier.fillMaxSize().padding(10.dp, 15.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(5.dp, 10.dp)
         ) {
@@ -45,7 +48,7 @@ fun SettingsFragment(onLogout: () -> Unit) {
                 checked = false,
                 enabled = false,
                 onCheckedChange = {
-                    checked = it
+                    oledEnabled = it
                 }
             )
         }
@@ -59,7 +62,7 @@ fun SettingsFragment(onLogout: () -> Unit) {
                 )
                 // TODO: get correct server URL
                 Text(
-                    text = stringResource(R.string.server_url_placeholder),
+                    text = prefs.domain,
                     color = MaterialTheme.colorScheme.secondary
                 )
             }
@@ -86,6 +89,6 @@ fun SettingsFragment(onLogout: () -> Unit) {
 @Composable
 fun SettingsPreview() {
     LinkGuardianTheme {
-        SettingsFragment({})
+        SettingsFragment {}
     }
 }

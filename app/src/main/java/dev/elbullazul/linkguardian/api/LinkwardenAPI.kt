@@ -2,26 +2,21 @@ package dev.elbullazul.linkguardian.api
 
 import android.content.Context
 import dev.elbullazul.linkguardian.R
-import dev.elbullazul.linkguardian.api.objects.ArrayResponse
-import dev.elbullazul.linkguardian.api.objects.Link
+import dev.elbullazul.linkguardian.api.objects.Collection
+import dev.elbullazul.linkguardian.api.objects.CollectionArray
+import dev.elbullazul.linkguardian.api.objects.LinkArray
 import dev.elbullazul.linkguardian.api.objects.PostCollection
 import dev.elbullazul.linkguardian.api.objects.PostLink
 import dev.elbullazul.linkguardian.api.objects.PostTag
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.encodeToJsonElement
 import okhttp3.HttpUrl
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
-import okio.IOException
 
-// TODO: if no arguments are received, loadFromPreferences should be called?
 class LinkwardenAPI(
     private var context: Context,
     private var domain: String = "",
@@ -32,6 +27,10 @@ class LinkwardenAPI(
     init {
         if (domain.isEmpty() && token.isEmpty() && scheme.isEmpty())
             loadFromPreferences()
+    }
+
+    companion object {
+        val MEDIA_TYPE_JSON = "application/json; charset=utf-8".toMediaType()
     }
 
     private fun loadFromPreferences(): Boolean {
@@ -79,7 +78,7 @@ class LinkwardenAPI(
         return SUCCESS
     }
 
-    fun getDashboard(): ArrayResponse {
+    fun getDashboard(): LinkArray {
         try {
             val future = ResponseFuture()
             val url = HttpUrl.Builder()
@@ -95,17 +94,17 @@ class LinkwardenAPI(
             client.newCall(request).enqueue(future)
 
             val json = future.get().body!!.string()
-            val data = Json.decodeFromString<ArrayResponse>(json)
+            val data = Json.decodeFromString<LinkArray>(json)
 
             return data
         }
         catch (e: Exception) {
             println(e.message)
-            return ArrayResponse()
+            return LinkArray()
         }
     }
 
-    fun getLinks(cursor: Int = 0): ArrayResponse {
+    fun getLinks(cursor: Int = 0): LinkArray {
         try {
             val future = ResponseFuture()
             val url = HttpUrl.Builder()
@@ -122,17 +121,17 @@ class LinkwardenAPI(
             client.newCall(request).enqueue(future)
 
             val json = future.get().body!!.string()
-            val data = Json.decodeFromString<ArrayResponse>(json)
+            val data = Json.decodeFromString<LinkArray>(json)
 
             return data
         }
         catch (e: Exception) {
             println(e.message)
-            return ArrayResponse()
+            return LinkArray()
         }
     }
 
-    fun postLink(submitUrl: String, name: String = "", collection: String = "", linkTags: Array<String> = arrayOf()): Boolean {
+    fun postLink(submitUrl: String, name: String, description: String, collection: Collection?, linkTags: Array<String> = arrayOf()): Boolean {
         try {
             val future = ResponseFuture()
             val url = HttpUrl.Builder()
@@ -146,7 +145,8 @@ class LinkwardenAPI(
 
             val payload = PostLink(
                 name = name,
-                collection = PostCollection(collection, 1 /*TODO: use correct user Id*/),
+                collection = PostCollection(collection),
+                description = description,
                 tags = tags,
                 url = submitUrl
             )
@@ -164,10 +164,9 @@ class LinkwardenAPI(
 
             client.newCall(request).enqueue(future)
 
-            // TODO: process response?
-//            val response = future.get().body!!.string()
+            val response = future.get()
 
-            return true;
+            return response.isSuccessful
         }
         catch (e: Exception) {
             println(e.message)
@@ -176,7 +175,30 @@ class LinkwardenAPI(
         return false;
     }
 
-    companion object {
-        val MEDIA_TYPE_JSON = "application/json; charset=utf-8".toMediaType()
+    fun getCollections(): CollectionArray {
+        try {
+            val future = ResponseFuture()
+            val url = HttpUrl.Builder()
+                .scheme(scheme)
+                .host(domain)
+                .addPathSegments(context.getString(R.string.api_v1_collections))
+                .build()
+            val request = Request.Builder()
+                .url(url)
+                .header("Authorization", "Bearer $token")
+                .build()
+
+            client.newCall(request).enqueue(future)
+
+            val json = future.get().body!!.string()
+
+            val data = Json.decodeFromString<CollectionArray>(json)
+
+            return data
+        }
+        catch (e: Exception) {
+            println(e.message)
+            return CollectionArray()
+        }
     }
 }

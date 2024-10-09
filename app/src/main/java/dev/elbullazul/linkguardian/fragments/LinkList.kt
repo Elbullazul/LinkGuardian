@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
@@ -63,7 +62,7 @@ fun LinkList() {
 
         LaunchedEffect(key1 = page.intValue) {
             loading.value = true
-            itemList.addAll(apiWrapper.getLinks(page.intValue * API_CURSOR_SIZE).response)
+            itemList.addAll(apiWrapper.getLinks(page.intValue * API_CURSOR_SIZE).items)
             loading.value = false
         }
 
@@ -75,8 +74,6 @@ fun LinkList() {
                     }
                 }
         }
-        val context = LocalContext.current
-        FloatingActionButton(onClick = { ShowToast(context,"Hello world!") }) {}
     }
 }
 

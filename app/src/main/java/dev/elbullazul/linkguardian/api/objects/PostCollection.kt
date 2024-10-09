@@ -6,4 +6,9 @@ import kotlinx.serialization.Serializable
 class PostCollection(
     val name: String,
     val ownerId: Int
-)
+) {
+    constructor(collection: Collection?): this(
+        collection?.name ?: "",
+        collection?.ownerId ?: -1
+    )
+}

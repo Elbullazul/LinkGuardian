@@ -99,6 +99,8 @@ fun LoginFragment(onLogin: () -> Unit) {
 
                 when (ret) {
                     SUCCESS -> {
+                        // TODO: save userId!
+
                         preferencesManager.persist()
                         onLogin()
                     }
