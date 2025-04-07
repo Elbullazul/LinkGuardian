@@ -10,7 +10,7 @@ An Android client for [Linkwarden](https://github.com/linkwarden/linkwarden). Bu
 - [x] Dark theme
 - [x] Browse links in the app
 - [x] Add links
-- [ ] Share target for quick sharing
+- [ ] Share target for quick sharing
 - [ ] Search
 - [ ] Edit links
 - [ ] Offline mode
@@ -21,4 +21,4 @@ An Android client for [Linkwarden](https://github.com/linkwarden/linkwarden). Bu
 - Kotlinx.serialization.json to parse Json sent by the server
 
 ### Architecture
-The app will be developped in as simple a way as possible. I'm relatively new to Kotlin, so not all code will follow best practices initially. If you have suggestions, feel free to open a pull request!
+The app will be developed in as simple a way as possible. I'm relatively new to Kotlin, so not all code will follow best practices initially. If you have suggestions, feel free to open a pull request!
