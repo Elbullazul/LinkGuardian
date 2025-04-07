@@ -1,4 +1,4 @@
-package dev.elbullazul.linkguardian.fragments
+package dev.elbullazul.linkguardian
 
 import android.content.Context
 import android.widget.Toast

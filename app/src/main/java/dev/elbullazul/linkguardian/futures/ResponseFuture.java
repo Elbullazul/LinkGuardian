@@ -1,4 +1,4 @@
-package dev.elbullazul.linkguardian.api;
+package dev.elbullazul.linkguardian.futures;
 
 import androidx.annotation.NonNull;
 
