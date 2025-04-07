@@ -26,9 +26,11 @@ class LinkwardenCollection(
     private val linkCount: LinkwardenLinkCount = LinkwardenLinkCount(0),
 
     @SerialName("members")
-    override val links: List<Bookmark> = listOf()
+    override val links: List<Bookmark> = listOf(),
 
-    // TODO: handle parent information
+    @SerialName("parent")
+    private val parent: LinkwardenParent? = null
+
 ) : Collection {
     override fun bookmarkCount(): Int {
         return linkCount.count

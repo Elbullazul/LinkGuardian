@@ -44,9 +44,11 @@ interface Backend {
                 .build()
 
             client.newCall(request).enqueue(future)
-            future.get().close()
 
-            return future.get().isSuccessful
+            val result = future.get()
+            println(result.body!!.string())
+
+            return result.isSuccessful
         }
         catch (e: Exception) {
             println(e.message)
@@ -75,6 +77,8 @@ interface Backend {
             client.newCall(request).enqueue(future)
 
             val body = future.get().body!!.string()
+
+            println("$route/$args $body")
 
             return body
         }

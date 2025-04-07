@@ -12,6 +12,8 @@ import dev.elbullazul.linkguardian.backends.linkwarden.responses.LinkwardenColle
 import dev.elbullazul.linkguardian.backends.linkwarden.responses.LinkwardenCollectionsResponse
 import dev.elbullazul.linkguardian.backends.linkwarden.responses.LinkwardenLinkResponse
 import dev.elbullazul.linkguardian.backends.linkwarden.responses.LinkwardenTagsResponse
+import dev.elbullazul.linkguardian.backends.linkwarden.responses.LinkwardenUserResponse
+import dev.elbullazul.linkguardian.backends.linkwarden.responses.LinkwardenUsersResponse
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import okhttp3.HttpUrl
@@ -35,12 +37,12 @@ class LinkwardenBackend(
     private var linkCursor = 0
 
     // API routes
-    private val ROUTE_USERS = "api/v1/public/users"
+    private val ROUTE_USERS = "api/v1/users"
     private val ROUTE_TAGS = "api/v1/tags"
     private val ROUTE_COLLECTIONS = "api/v1/collections"
     private val ROUTE_LINKS = "api/v1/links"
     private val ROUTE_DASHBOARD = "api/v2/dashboard"
-    private val ROUTE_AVATAR = "api/v1/avatar/"
+    private val ROUTE_AVATAR = "api/v1/avatar"
 
     override suspend fun getBookmarks(): List<Bookmark> {
         val data = get(ROUTE_LINKS, mapOf(Pair("cursor", "$linkCursor"), Pair("sort", "0")))
@@ -91,15 +93,27 @@ class LinkwardenBackend(
 
     override fun getUser(id: Int): User {
         val data = get("$ROUTE_USERS/$id")
+        val response = json.decodeFromString<LinkwardenUserResponse>(data)
 
-        TODO("Not yet implemented")
+        return response.user
     }
 
-    // TODO: should be suspend!
+    // unnecessary?
+    fun getUsers(): List<User> {
+        val data = get(ROUTE_USERS)
+        val response = json.decodeFromString<LinkwardenUsersResponse>(data)
+
+        return response.users
+    }
+
+    // unnecessary?
+    fun getDashboardData() {
+        val data = get(ROUTE_DASHBOARD)
+        println(data)
+    }
+
     override fun createBookmark(link: Bookmark): Boolean {
         val payload = json.encodeToString<LinkwardenLink>(link as LinkwardenLink)
-
-        println(payload)
 
         return post(ROUTE_LINKS, payload)
     }
