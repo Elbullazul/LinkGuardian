@@ -27,13 +27,16 @@ import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 @Composable
 fun SettingsPage(onLogout: () -> Unit) {
     val context = LocalContext.current
-    var oledEnabled by remember { mutableStateOf(true) }
-
     val prefs = PreferencesManager(context)
     prefs.load()
 
+    var oledEnabled by remember { mutableStateOf(true) }
+    var showPreviews by remember { mutableStateOf(prefs.showPreviews) }
+
+    val rowModifier = Modifier.fillMaxWidth().padding(5.dp, 6.dp)
+
     Column(modifier = Modifier.fillMaxSize().padding(10.dp, 15.dp)) {
-        Row(modifier = Modifier.fillMaxWidth().padding(5.dp, 10.dp)) {
+        Row(modifier = rowModifier) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = stringResource(R.string.oled_theme))
                 Text(
@@ -47,7 +50,21 @@ fun SettingsPage(onLogout: () -> Unit) {
                 onCheckedChange = { oledEnabled = it }
             )
         }
-        Row(modifier = Modifier.fillMaxWidth().padding(5.dp, 2.dp)) {
+        Row(modifier = rowModifier) {
+            Text(text = stringResource(R.string.show_previews), modifier = Modifier.weight(1f))
+
+            // TODO: make the switch work!
+            Switch(
+                checked = false,
+                enabled = false,
+                onCheckedChange = {
+                    showPreviews = it
+                    prefs.showPreviews = showPreviews
+                    prefs.persist()
+                }
+            )
+        }
+        Row(modifier = rowModifier) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = stringResource(R.string.connected_to_server))
                 Text(

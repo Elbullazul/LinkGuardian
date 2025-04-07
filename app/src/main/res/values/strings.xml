@@ -35,4 +35,5 @@
     <string name="collections">Collections</string>
     <string name="work_in_progress">Work in progress</string>
     <string name="links_or_link">link(s)</string>
+    <string name="show_previews">Show image previews in lists</string>
 </resources>

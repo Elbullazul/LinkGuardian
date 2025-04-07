@@ -116,6 +116,10 @@ interface Backend {
         return false
     }
 
+    fun buildUrl(resource: String): String {
+        return "$scheme://$domain/$resource"
+    }
+
     companion object {
         val MEDIA_TYPE_JSON = "application/json; charset=utf-8".toMediaType()
     }
