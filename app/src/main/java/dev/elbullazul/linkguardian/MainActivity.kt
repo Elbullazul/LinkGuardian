@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dev.elbullazul.linkguardian.navigation.AppNavController
+import dev.elbullazul.linkguardian.navigation.NAV_ROUTE_COLLECTIONS
 import dev.elbullazul.linkguardian.navigation.NAV_ROUTE_DASHBOARD
 import dev.elbullazul.linkguardian.navigation.NAV_ROUTE_LOGIN
 import dev.elbullazul.linkguardian.navigation.NAV_ROUTE_SETTINGS
@@ -70,6 +71,12 @@ fun App() {
         NAV_ROUTE_DASHBOARD -> {
             displayBottomBar.value = true
             displayFloatingButton.value = true
+            displayBackButton.value = false
+        }
+
+        NAV_ROUTE_COLLECTIONS -> {
+            displayBottomBar.value = true
+            displayFloatingButton.value = false
             displayBackButton.value = false
         }
 
