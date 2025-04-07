@@ -1,4 +1,4 @@
-package dev.elbullazul.linkguardian.fragments
+package dev.elbullazul.linkguardian.ui.pages
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,29 +13,31 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.elbullazul.linkguardian.api.API_CURSOR_SIZE
-import dev.elbullazul.linkguardian.api.LinkwardenAPI
-import dev.elbullazul.linkguardian.api.objects.Link
+import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenBackend
+import dev.elbullazul.linkguardian.backends.generic.Bookmark
+import dev.elbullazul.linkguardian.ui.fragments.BookmarkFragment
+import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
-import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun LinkList() {
-    val page = remember { mutableIntStateOf(0) }
-    val loading = remember { mutableStateOf(false) }
-    val itemList = remember { mutableStateListOf<Link>() }
+fun BookmarksPage() {
+    val loading = remember { mutableStateOf(true) }
+    val itemList = remember { mutableStateListOf<Bookmark>() }
     val listState = rememberLazyListState()
-    val apiWrapper = LinkwardenAPI(LocalContext.current)
+
+    // TODO: backend should be received from invoker instead of being recreated
+    val prefs = PreferencesManager(LocalContext.current)
+    prefs.load()
+
+    val backend = LinkwardenBackend(prefs.scheme, prefs.domain, prefs.token)
 
     Column(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -43,36 +45,34 @@ fun LinkList() {
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            items(itemList) { link ->
-                LinkFragment(link = link)
-            }
-
-            // show indicator when loading
+            // TODO: the loading indicator freezes when opening the app
             item {
                 if (loading.value) {
                     Box(
                         contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxWidth().padding(10.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
                     ) {
-                        CircularProgressIndicator(modifier = Modifier.size(50.dp), strokeWidth = 2.dp)
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(50.dp),
+                            strokeWidth = 2.dp
+                        )
                     }
                 }
             }
+            items(itemList) { link ->
+                BookmarkFragment(link)
+            }
         }
 
-        LaunchedEffect(key1 = page.intValue) {
-            loading.value = true
-            itemList.addAll(apiWrapper.getLinks(page.intValue * API_CURSOR_SIZE).items)
+        LaunchedEffect(key1 = 0) {
+            // TODO: maybe a model-based approach would work better
+            while (backend.hasBookmarks) {
+                itemList.addAll(backend.run { getBookmarks() })
+            }
+
             loading.value = false
-        }
-
-        LaunchedEffect(listState) {
-            snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
-                .collectLatest { index ->
-                    if (!loading.value && index != null && index >= itemList.size - 5) {
-                        page.intValue++
-                    }
-                }
         }
     }
 }
@@ -81,6 +81,6 @@ fun LinkList() {
 @Composable
 fun LinkListPreview() {
     LinkGuardianTheme {
-        LinkList()
+        BookmarksPage()
     }
 }

@@ -1,4 +1,4 @@
-package dev.elbullazul.linkguardian.fragments
+package dev.elbullazul.linkguardian.ui.fragments
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,10 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.elbullazul.linkguardian.R
-import dev.elbullazul.linkguardian.api.DOMAIN_UNREACHABLE
-import dev.elbullazul.linkguardian.api.INVALID_DOMAIN
-import dev.elbullazul.linkguardian.api.SUCCESS
-import dev.elbullazul.linkguardian.api.LinkwardenAPI
+import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenBackend
+import dev.elbullazul.linkguardian.ShowToast
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.storage.SCHEME_HTTP
 import dev.elbullazul.linkguardian.storage.SCHEME_HTTPS
@@ -33,12 +31,12 @@ import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 @Composable
 fun LoginFragment(onLogin: () -> Unit) {
     val context = LocalContext.current
-    val preferencesManager = PreferencesManager(context)
-    preferencesManager.load()
+    val settings = PreferencesManager(context)
+    settings.load()
 
-    val serverUrl = remember { mutableStateOf(preferencesManager.domain) }
-    val apiToken = remember { mutableStateOf(preferencesManager.token) }
     val useHttps = remember { mutableStateOf(true) }
+    val serverUrl = remember { mutableStateOf(settings.domain) }
+    val apiToken = remember { mutableStateOf(settings.token) }
 
     Column(
         modifier = Modifier
@@ -85,31 +83,25 @@ fun LoginFragment(onLogin: () -> Unit) {
         Button(
             modifier = Modifier.padding(vertical = 10.dp),
             onClick = {
-                preferencesManager.domain = serverUrl.value
-                preferencesManager.token = apiToken.value
-                preferencesManager.scheme = if (useHttps.value) { SCHEME_HTTPS } else { SCHEME_HTTP }
+                val scheme = if (useHttps.value) SCHEME_HTTPS else SCHEME_HTTP
+                val domain = serverUrl.value
+                val token = apiToken.value
 
-                val apiWrapper = LinkwardenAPI(
-                    context,
-                    preferencesManager.domain,
-                    preferencesManager.token,
-                    preferencesManager.scheme
-                )
-                val ret = apiWrapper.connect()
+                val backend = LinkwardenBackend(scheme, domain, token)
 
-                when (ret) {
-                    SUCCESS -> {
-                        // TODO: save userId!
+                if (!backend.isReachable()) {
+                    ShowToast(context, context.getString(R.string.domain_unreachable))
+                }
+                else if (!backend.isAuthorized()) {
+                    ShowToast(context, context.getString(R.string.access_denied))
+                }
+                else {
+                    settings.scheme = scheme
+                    settings.domain = domain
+                    settings.token = token
+                    settings.persist()
 
-                        preferencesManager.persist()
-                        onLogin()
-                    }
-                    INVALID_DOMAIN -> {
-                        ShowToast(context, context.getString(R.string.illegal_domain))
-                    }
-                    DOMAIN_UNREACHABLE -> {
-                        ShowToast(context, context.getString(R.string.server_unreachable))
-                    }
+                    onLogin()
                 }
             }
         ) {

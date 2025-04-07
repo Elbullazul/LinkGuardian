@@ -1,4 +1,4 @@
-package dev.elbullazul.linkguardian.fragments
+package dev.elbullazul.linkguardian.ui.pages
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,25 +20,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.elbullazul.linkguardian.R
+import dev.elbullazul.linkguardian.ShowToast
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
-fun SettingsFragment(onLogout: () -> Unit) {
+fun SettingsPage(onLogout: () -> Unit) {
     val context = LocalContext.current
-    val prefs = PreferencesManager(context)
     var oledEnabled by remember { mutableStateOf(true) }
 
+    val prefs = PreferencesManager(context)
     prefs.load()
 
     Column(modifier = Modifier.fillMaxSize().padding(10.dp, 15.dp)) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(5.dp, 10.dp)
-        ) {
+        Row(modifier = Modifier.fillMaxWidth().padding(5.dp, 10.dp)) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = stringResource(R.string.oled_theme)
-                )
+                Text(text = stringResource(R.string.oled_theme))
                 Text(
                     text = stringResource(R.string.missing_feature),
                     color = MaterialTheme.colorScheme.secondary
@@ -47,20 +44,12 @@ fun SettingsFragment(onLogout: () -> Unit) {
             Switch(
                 checked = false,
                 enabled = false,
-                onCheckedChange = {
-                    oledEnabled = it
-                }
+                onCheckedChange = { oledEnabled = it }
             )
         }
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(5.dp, 2.dp)
-//            horizontalArrangement = Arrangement.Center
-        ) {
+        Row(modifier = Modifier.fillMaxWidth().padding(5.dp, 2.dp)) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = stringResource(R.string.connected_to_server)
-                )
-                // TODO: get correct server URL
+                Text(text = stringResource(R.string.connected_to_server))
                 Text(
                     text = prefs.domain,
                     color = MaterialTheme.colorScheme.secondary
@@ -89,6 +78,6 @@ fun SettingsFragment(onLogout: () -> Unit) {
 @Composable
 fun SettingsPreview() {
     LinkGuardianTheme {
-        SettingsFragment {}
+        SettingsPage {}
     }
 }

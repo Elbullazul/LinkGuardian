@@ -1,6 +1,5 @@
-package dev.elbullazul.linkguardian.fragments
+package dev.elbullazul.linkguardian.ui.fragments
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,20 +15,25 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.elbullazul.linkguardian.R
-import dev.elbullazul.linkguardian.api.LinkwardenAPI
+import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenBackend
+import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenCollection
+import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenLink
+import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenTag
+import dev.elbullazul.linkguardian.ui.dialogs.CollectionsDialog
+import dev.elbullazul.linkguardian.ShowToast
+import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
 fun SubmitLinkFragment(onSubmit: () -> Unit) {
     val context = LocalContext.current
-    val apiWrapper = LinkwardenAPI(context)
+    val showCollectionPicker = rememberSaveable { (mutableStateOf(false)) }
 
     val linkUrl = remember { mutableStateOf("") }
 
@@ -38,9 +42,15 @@ fun SubmitLinkFragment(onSubmit: () -> Unit) {
     val name = remember { mutableStateOf("") }
     val description = remember { mutableStateOf("") }
     val collectionIdx = remember { mutableIntStateOf(-1) }
-    val showCollectionPicker = rememberSaveable { (mutableStateOf(false)) }
 
-    val collections = apiWrapper.getCollections().items
+    // TODO: backend should be received from invoker
+    val prefs = PreferencesManager(context)
+    prefs.load()
+
+    // TODO: this gets called multiple times when manually typing an URL in the URL entry
+    // TODO: invoke once, when opening the screen, or receive a list of all collections
+    val backend = LinkwardenBackend(prefs.scheme, prefs.domain, prefs.token)
+    val collections = backend.getCollections()
 
     if (showCollectionPicker.value) {
         CollectionsDialog(
@@ -119,23 +129,23 @@ fun SubmitLinkFragment(onSubmit: () -> Unit) {
             }
             Row(modifier = Modifier.weight(1f)) {}
             Button(onClick = {
-                val postSuccessful = apiWrapper.postLink(
-                    submitUrl = linkUrl.value,
-
-                    // if no collection was selected, linkwarden will assign it to the default collection
-                    collection = when (collectionIdx.intValue > -1) {
-                        true -> collections[collectionIdx.intValue]
-                        false -> null
-                    },
+                val link = LinkwardenLink(
+                    id = -1,
                     name = name.value,
+                    url = linkUrl.value,
                     description = description.value,
-                    linkTags = tags.value.split(" ").toTypedArray()
+                    tags = castTags(tags.value),
+                    collection = when (collectionIdx.intValue > -1) {
+                        true -> collections[collectionIdx.intValue] as LinkwardenCollection
+                        false -> null
+                    }
                 )
 
-                if (postSuccessful) {
+                if (backend.createBookmark(link)) {
                     ShowToast(context, context.getString(R.string.link_submit_success))
                     onSubmit()
-                } else {
+                }
+                else {
                     ShowToast(context, context.getString(R.string.link_submit_failed));
                 }
             }) {
@@ -143,6 +153,21 @@ fun SubmitLinkFragment(onSubmit: () -> Unit) {
             }
         }
     }
+}
+
+fun castTags(inputTags: String): List<LinkwardenTag> {
+    var linkTags = arrayListOf<LinkwardenTag>()
+
+    for (tag in inputTags.split(",")) {
+        linkTags.add(
+            LinkwardenTag(
+                id = -1,
+                name = tag
+            )
+        )
+    }
+
+    return linkTags
 }
 
 @Preview(showBackground = true)

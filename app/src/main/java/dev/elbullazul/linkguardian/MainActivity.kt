@@ -29,10 +29,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dev.elbullazul.linkguardian.navigation.AppNavController
-import dev.elbullazul.linkguardian.navigation.ROUTE_DASHBOARD
-import dev.elbullazul.linkguardian.navigation.ROUTE_LOGIN
-import dev.elbullazul.linkguardian.navigation.ROUTE_SETTINGS
-import dev.elbullazul.linkguardian.navigation.ROUTE_SUBMIT_LINK
+import dev.elbullazul.linkguardian.navigation.NAV_ROUTE_DASHBOARD
+import dev.elbullazul.linkguardian.navigation.NAV_ROUTE_LOGIN
+import dev.elbullazul.linkguardian.navigation.NAV_ROUTE_SETTINGS
+import dev.elbullazul.linkguardian.navigation.NAV_ROUTE_SUBMIT_LINK
 import dev.elbullazul.linkguardian.navigation.destinations
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
@@ -61,22 +61,25 @@ fun App() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
     when (navBackStackEntry?.destination?.route) {
-        ROUTE_LOGIN -> {
+        NAV_ROUTE_LOGIN -> {
             displayBottomBar.value = false
             displayFloatingButton.value = false
             displayBackButton.value = false
         }
-        ROUTE_DASHBOARD -> {
+
+        NAV_ROUTE_DASHBOARD -> {
             displayBottomBar.value = true
             displayFloatingButton.value = true
             displayBackButton.value = false
         }
-        ROUTE_SETTINGS -> {
+
+        NAV_ROUTE_SETTINGS -> {
             displayBottomBar.value = true
             displayFloatingButton.value = false
             displayBackButton.value = false
         }
-        ROUTE_SUBMIT_LINK -> {
+
+        NAV_ROUTE_SUBMIT_LINK -> {
             displayBottomBar.value = true
             displayFloatingButton.value = false
             displayBackButton.value = true
@@ -119,7 +122,7 @@ fun App() {
             floatingActionButton = {
                 if (displayFloatingButton.value) {
                     FloatingActionButton(
-                        onClick = { navController.navigate(ROUTE_SUBMIT_LINK) },
+                        onClick = { navController.navigate(NAV_ROUTE_SUBMIT_LINK) },
                     ) {
                         Icon(Icons.Filled.Add, "")
                     }
@@ -128,12 +131,10 @@ fun App() {
             modifier = Modifier.fillMaxSize()
         ) { innerPadding ->
             Column(modifier = Modifier.padding(innerPadding)) {
-                val startDestination = if (loggedIn.value)
-                    ROUTE_DASHBOARD
-                else
-                    ROUTE_LOGIN
-
-                AppNavController(navController = navController, startDestination = startDestination)
+                AppNavController(
+                    navController = navController,
+                    startDestination = if (loggedIn.value) NAV_ROUTE_DASHBOARD else NAV_ROUTE_LOGIN
+                )
             }
         }
     }

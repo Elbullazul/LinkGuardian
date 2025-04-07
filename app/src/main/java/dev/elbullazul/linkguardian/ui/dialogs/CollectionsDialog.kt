@@ -1,4 +1,4 @@
-package dev.elbullazul.linkguardian.fragments
+package dev.elbullazul.linkguardian.ui.dialogs
 
 import android.app.AlertDialog
 import androidx.compose.runtime.Composable
@@ -7,10 +7,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import dev.elbullazul.linkguardian.R
-import dev.elbullazul.linkguardian.api.objects.Collection
+import dev.elbullazul.linkguardian.backends.generic.Collection
 
 @Composable
-fun CollectionsDialog(selectedIdx: Int, collections: Array<Collection>, onSelect: (collectionId: Int) -> Unit, onCancel: () -> Unit) {
+fun CollectionsDialog(selectedIdx: Int, collections: List<Collection>, onSelect: (collectionId: Int) -> Unit, onCancel: () -> Unit) {
     val context = LocalContext.current
     val selectedCollection = remember { mutableIntStateOf(0) }
 
