@@ -17,8 +17,9 @@ An Android client for [Linkwarden](https://github.com/linkwarden/linkwarden). Bu
 - [ ] Open archived link copy
 
 ### Dependencies
-- OkHttp for making HTTP requests
-- Kotlinx.serialization.json to parse Json sent by the server
+- [OkHttp](https://github.com/square/okhttp) for making HTTP requests
+- [Kotlinx Serialization](https://github.com/Kotlin/kotlinx.serialization) for Json serialization/deserialization
+- [Coil](https://github.com/coil-kt/coil) to display remote images
 
 ### Architecture
 The app will be developed in as simple a way as possible. I'm relatively new to Kotlin, so not all code will follow best practices initially. If you have suggestions, feel free to open a pull request!
