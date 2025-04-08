@@ -54,12 +54,12 @@ fun App() {
     val context = LocalContext.current
     val prefs = PreferencesManager(context)
     val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
 
     val loggedIn = rememberSaveable { (mutableStateOf(false)) }
     val displayBottomBar = rememberSaveable { (mutableStateOf(false)) }
     val displayBackButton = rememberSaveable { (mutableStateOf(false)) }
     val displayFloatingButton = rememberSaveable { (mutableStateOf(false)) }
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
 
     when (navBackStackEntry?.destination?.route) {
         NAV_ROUTE_LOGIN -> {

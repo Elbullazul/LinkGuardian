@@ -8,7 +8,7 @@ import dev.elbullazul.linkguardian.ui.pages.CollectionsPage
 import dev.elbullazul.linkguardian.ui.pages.BookmarksPage
 import dev.elbullazul.linkguardian.ui.fragments.LoginFragment
 import dev.elbullazul.linkguardian.ui.pages.SettingsPage
-import dev.elbullazul.linkguardian.ui.fragments.SubmitLinkFragment
+import dev.elbullazul.linkguardian.ui.pages.SubmitBookmarkPage
 
 @Composable
 fun AppNavController(navController: NavHostController, startDestination: String) {
@@ -33,7 +33,7 @@ fun AppNavController(navController: NavHostController, startDestination: String)
             )
         }
         composable(NAV_ROUTE_SUBMIT_LINK) {
-            SubmitLinkFragment(
+            SubmitBookmarkPage(
                 onSubmit = { navController.navigate(NAV_ROUTE_DASHBOARD) }
             )
         }

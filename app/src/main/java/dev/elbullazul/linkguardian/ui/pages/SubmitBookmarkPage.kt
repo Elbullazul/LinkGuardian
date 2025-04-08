@@ -1,4 +1,4 @@
-package dev.elbullazul.linkguardian.ui.fragments
+package dev.elbullazul.linkguardian.ui.pages
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,7 +31,7 @@ import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
-fun SubmitLinkFragment(onSubmit: () -> Unit) {
+fun SubmitBookmarkPage(onSubmit: () -> Unit) {
     val context = LocalContext.current
     val showCollectionPicker = rememberSaveable { (mutableStateOf(false)) }
 
@@ -174,6 +174,6 @@ fun castTags(inputTags: String): List<LinkwardenTag> {
 @Composable
 fun SubmitLinkPreview() {
     LinkGuardianTheme(darkTheme = true) {
-        SubmitLinkFragment {}
+        SubmitBookmarkPage {}
     }
 }
