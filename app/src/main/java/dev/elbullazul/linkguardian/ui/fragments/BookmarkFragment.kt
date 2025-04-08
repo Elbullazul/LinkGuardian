@@ -67,7 +67,7 @@ fun BookmarkFragment(link: Bookmark, serverUrl: String, showPreviews: Boolean) {
                 if (link is Describable) {
                     Text(link.truncatedDescription())
                 }
-                TagFragment(link)
+                TagFragment(link.tags)
             }
         }
     }
