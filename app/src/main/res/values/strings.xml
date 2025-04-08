@@ -25,7 +25,7 @@
     <string name="link_submit_success">Link was added successfully</string>
     <string name="link_submit_failed">Submission failed (see logs for details)</string>
     <string name="tags_placeholder">Tags separated by commas</string>
-    <string name="collection_select">Choose a collection</string>
+    <string name="collection_select">Select a collection</string>
     <string name="select">Select</string>
     <string name="cancel">Cancel</string>
     <string name="autogenerate_if_empty">Leave empty to auto-fetch</string>
@@ -36,4 +36,6 @@
     <string name="work_in_progress">Work in progress</string>
     <string name="links_or_link">link(s)</string>
     <string name="show_previews">Show image previews in lists</string>
+    <string name="none">None</string>
+    <string name="only_if_supported">Only enabled if server supports it</string>
 </resources>

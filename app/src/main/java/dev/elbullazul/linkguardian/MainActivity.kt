@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenBackend
 import dev.elbullazul.linkguardian.navigation.AppNavController
 import dev.elbullazul.linkguardian.navigation.NAV_ROUTE_COLLECTIONS
 import dev.elbullazul.linkguardian.navigation.NAV_ROUTE_DASHBOARD
@@ -61,6 +62,11 @@ fun App() {
     val displayBackButton = rememberSaveable { (mutableStateOf(false)) }
     val displayFloatingButton = rememberSaveable { (mutableStateOf(false)) }
 
+    if (prefs.load())
+        loggedIn.value = true
+
+    val backend = LinkwardenBackend(prefs.scheme, prefs.domain, prefs.token)
+
     when (navBackStackEntry?.destination?.route) {
         NAV_ROUTE_LOGIN -> {
             displayBottomBar.value = false
@@ -92,9 +98,6 @@ fun App() {
             displayBackButton.value = true
         }
     }
-
-    if (prefs.load())
-        loggedIn.value = true
 
     LinkGuardianTheme {
         Scaffold(
@@ -140,6 +143,8 @@ fun App() {
             Column(modifier = Modifier.padding(innerPadding)) {
                 AppNavController(
                     navController = navController,
+                    preferences = prefs,
+                    backend = backend,
                     startDestination = if (loggedIn.value) NAV_ROUTE_DASHBOARD else NAV_ROUTE_LOGIN
                 )
             }

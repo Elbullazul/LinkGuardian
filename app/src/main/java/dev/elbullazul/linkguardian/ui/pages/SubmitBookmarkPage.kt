@@ -25,46 +25,36 @@ import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenBackend
 import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenCollection
 import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenLink
 import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenTag
-import dev.elbullazul.linkguardian.ui.dialogs.CollectionsDialog
 import dev.elbullazul.linkguardian.ShowToast
+import dev.elbullazul.linkguardian.backends.generic.Backend
+import dev.elbullazul.linkguardian.backends.generic.Collection
 import dev.elbullazul.linkguardian.storage.PreferencesManager
+import dev.elbullazul.linkguardian.ui.dialogs.CollectionPickerDialog
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
-fun SubmitBookmarkPage(onSubmit: () -> Unit) {
+fun SubmitBookmarkPage(backend: Backend, preferences: PreferencesManager, onSubmit: () -> Unit) {
     val context = LocalContext.current
     val showCollectionPicker = rememberSaveable { (mutableStateOf(false)) }
+    var collections = remember { mutableListOf<Collection>() }
 
     val linkUrl = remember { mutableStateOf("") }
-
-    // optional parameters
     val tags = remember { mutableStateOf("") }
     val name = remember { mutableStateOf("") }
     val description = remember { mutableStateOf("") }
-    val collectionIdx = remember { mutableIntStateOf(-1) }
-
-    // TODO: backend should be received from invoker
-    val prefs = PreferencesManager(context)
-    prefs.load()
-
-    // TODO: this gets called multiple times when manually typing an URL in the URL entry
-    // TODO: invoke once, when opening the screen, or receive a list of all collections
-    val backend = LinkwardenBackend(prefs.scheme, prefs.domain, prefs.token)
-    val collections = backend.getCollections()
+    val collectionIndex = remember { mutableIntStateOf(-1) }
 
     if (showCollectionPicker.value) {
-        CollectionsDialog(
-            selectedIdx = collectionIdx.intValue,
-            collections = collections,
-            onSelect = { selectedIdx: Int ->
-                collectionIdx.intValue = selectedIdx
+        collections = backend.getCollections().toMutableList()
 
-                showCollectionPicker.value = false
-            },
-            onCancel = {
-                showCollectionPicker.value = false
-            }
-        )
+        CollectionPickerDialog(
+            collections = collections,
+            selected = collectionIndex.intValue
+        ) { idx ->
+            collectionIndex.intValue = idx
+        }
+
+        showCollectionPicker.value = false
     }
 
     Column(
@@ -95,7 +85,7 @@ fun SubmitBookmarkPage(onSubmit: () -> Unit) {
             value = tags.value,
             onValueChange = { tags.value = it },
             placeholder = { Text(stringResource(R.string.tags_placeholder)) },
-            label = { Text(stringResource(R.string.tags))}
+            label = { Text(stringResource(R.string.tags)) }
         )
         TextField(
             singleLine = true,
@@ -105,7 +95,7 @@ fun SubmitBookmarkPage(onSubmit: () -> Unit) {
             value = name.value,
             onValueChange = { name.value = it },
             placeholder = { Text(stringResource(R.string.autogenerate_if_empty)) },
-            label = { Text(stringResource(R.string.name))}
+            label = { Text(stringResource(R.string.name)) }
         )
         TextField(
             singleLine = false,
@@ -117,7 +107,7 @@ fun SubmitBookmarkPage(onSubmit: () -> Unit) {
             value = description.value,
             onValueChange = { description.value = it },
             placeholder = { Text(stringResource(R.string.description_placeholder)) },
-            label = { Text(stringResource(R.string.description))}
+            label = { Text(stringResource(R.string.description)) }
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -135,8 +125,8 @@ fun SubmitBookmarkPage(onSubmit: () -> Unit) {
                     url = linkUrl.value,
                     description = description.value,
                     tags = castTags(tags.value),
-                    collection = when (collectionIdx.intValue > -1) {
-                        true -> collections[collectionIdx.intValue] as LinkwardenCollection
+                    collection = when (collectionIndex.intValue > -1) {
+                        true -> collections[collectionIndex.intValue] as LinkwardenCollection
                         false -> null
                     }
                 )
@@ -144,8 +134,7 @@ fun SubmitBookmarkPage(onSubmit: () -> Unit) {
                 if (backend.createBookmark(link)) {
                     ShowToast(context, context.getString(R.string.link_submit_success))
                     onSubmit()
-                }
-                else {
+                } else {
                     ShowToast(context, context.getString(R.string.link_submit_failed));
                 }
             }) {
@@ -174,6 +163,10 @@ fun castTags(inputTags: String): List<LinkwardenTag> {
 @Composable
 fun SubmitLinkPreview() {
     LinkGuardianTheme(darkTheme = true) {
-        SubmitBookmarkPage {}
+        SubmitBookmarkPage(
+            backend = LinkwardenBackend("", "", ""),
+            preferences = PreferencesManager(LocalContext.current),
+            onSubmit = {}
+        )
     }
 }

@@ -18,13 +18,12 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import dev.elbullazul.linkguardian.R
 import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenCollection
 import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenLink
 import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenTag
@@ -32,23 +31,9 @@ import dev.elbullazul.linkguardian.backends.generic.Bookmark
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
-fun BookmarkFragment(link: Bookmark, serverUrl: String = "") {
+fun BookmarkFragment(link: Bookmark, serverUrl: String, showPreviews: Boolean) {
     link as LinkwardenLink
-
     val uriHandler = LocalUriHandler.current
-    val linkDescription = link.shortDescription()
-
-    val annotatedString = buildAnnotatedString {
-        append(link.name)
-        addStyle(
-            style = SpanStyle(
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                textDecoration = TextDecoration.Underline
-            ),
-            start = 0,
-            end = link.name.length
-        )
-    }
 
     Card(
         Modifier
@@ -59,26 +44,45 @@ fun BookmarkFragment(link: Bookmark, serverUrl: String = "") {
             },
     ) {
         Row(Modifier
-            .fillMaxWidth()
-            .padding(10.dp, 5.dp)) {
-            // TODO: when enabled, make showing previews a toggleable option
-            // TODO: model requires the resource's complete URL
-//            AsyncImage(
-//                model = "https://docs.linkwarden.app/img/logo.png",
-//                model = "$serverUrl/${link.preview}",
-//                contentDescription = "",
-//                contentScale = ContentScale.FillBounds,
-//                modifier = Modifier.height(80.dp).width(80.dp).padding(end = 8.dp)
-//            )
+                .fillMaxWidth()
+                .padding(10.dp, 5.dp)
+        ) {
+            // TODO: rework to only show preview if enabled and service provides previews
+            if (showPreviews) {
+                AsyncImage(
+                    model = "$serverUrl/${link.preview}",
+                    contentDescription = "",
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier
+                        .height(80.dp)
+                        .width(80.dp)
+                        .padding(end = 8.dp)
+                )
+            }
             Column {
                 Row {
-                    Text(annotatedString, Modifier.fillMaxWidth())
+                    Text(LinkedText(link.name), Modifier.fillMaxWidth())
                     Icon(Icons.Filled.MoreVert, "")
                 }
-                Text(linkDescription.ifEmpty { stringResource(id = R.string.no_description) })
+                Text(link.shortDescription())
                 TagFragment(link)
             }
         }
+    }
+}
+
+@Composable
+fun LinkedText(text: String): AnnotatedString {
+    return buildAnnotatedString {
+        append(text)
+        addStyle(
+            style = SpanStyle(
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                textDecoration = TextDecoration.Underline
+            ),
+            start = 0,
+            end = text.length
+        )
     }
 }
 
@@ -92,7 +96,7 @@ fun LinkCardPreview() {
                 name = "Demo",
                 description = "Link description",
                 url = "https://example.org",
-                preview = "https://github.com/coil-kt/coil/raw/main/logo.svg",
+                preview = "img/logo.png",
                 tags = listOf(
                     LinkwardenTag(
                         id = 0,
@@ -107,7 +111,9 @@ fun LinkCardPreview() {
                     id = 0,
                     name = "Nameless collection"
                 )
-            )
+            ),
+            serverUrl = "https://docs.linkwarden.app",
+            showPreviews = true
         )
     }
 }

@@ -3,6 +3,7 @@ package dev.elbullazul.linkguardian.ui.fragments
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,6 +31,7 @@ fun ComposableFragment(collection: Collection) {
                     modifier = Modifier.padding(vertical = 6.dp).weight(1.0f)
                 )
                 Text(
+                    color = MaterialTheme.colorScheme.secondary,
                     text = "${collection.bookmarkCount()} ${stringResource(R.string.links_or_link)}"
                 )
             }

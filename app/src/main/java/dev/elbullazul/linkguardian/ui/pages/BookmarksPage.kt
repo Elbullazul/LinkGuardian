@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.elbullazul.linkguardian.backends.generic.Backend
 import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenBackend
 import dev.elbullazul.linkguardian.backends.generic.Bookmark
 import dev.elbullazul.linkguardian.ui.fragments.BookmarkFragment
@@ -28,16 +29,10 @@ import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
-fun BookmarksPage() {
+fun BookmarksPage(backend: Backend, preferences: PreferencesManager) {
     val loading = remember { mutableStateOf(true) }
     val itemList = remember { mutableStateListOf<Bookmark>() }
     val listState = rememberLazyListState()
-
-    // TODO: backend should be received from invoker instead of being recreated
-    val prefs = PreferencesManager(LocalContext.current)
-    prefs.load()
-
-    val backend = LinkwardenBackend(prefs.scheme, prefs.domain, prefs.token)
 
     Column(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -45,7 +40,7 @@ fun BookmarksPage() {
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            // TODO: the loading indicator freezes when opening the app
+            // TODO: the loading indicator does not spin properly
             item {
                 if (loading.value) {
                     Box(
@@ -62,11 +57,17 @@ fun BookmarksPage() {
                 }
             }
             items(itemList) { link ->
-                BookmarkFragment(link)
+                BookmarkFragment(
+                    link = link,
+                    serverUrl = "${backend.scheme}://${backend.domain}",
+                    showPreviews = preferences.showPreviews
+                )
             }
         }
 
         LaunchedEffect(key1 = 0) {
+            loading.value = true
+
             // TODO: maybe a model-based approach would work better
             while (backend.hasBookmarks) {
                 itemList.addAll(backend.run { getBookmarks() })
@@ -81,6 +82,9 @@ fun BookmarksPage() {
 @Composable
 fun LinkListPreview() {
     LinkGuardianTheme {
-        BookmarksPage()
+        BookmarksPage(
+            backend = LinkwardenBackend("","",""),
+            preferences = PreferencesManager(LocalContext.current)
+        )
     }
 }

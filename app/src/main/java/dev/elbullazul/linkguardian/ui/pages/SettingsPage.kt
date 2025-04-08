@@ -25,42 +25,46 @@ import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
-fun SettingsPage(onLogout: () -> Unit) {
+fun SettingsPage(preferences: PreferencesManager, onLogout: () -> Unit) {
     val context = LocalContext.current
-    val prefs = PreferencesManager(context)
-    prefs.load()
-
-    var oledEnabled by remember { mutableStateOf(true) }
-    var showPreviews by remember { mutableStateOf(prefs.showPreviews) }
-
     val rowModifier = Modifier.fillMaxWidth().padding(5.dp, 6.dp)
+
+    var enableOledTheme by remember { mutableStateOf(preferences.oledTheme) }
+    var enableBookmarkPreviews by remember { mutableStateOf(preferences.showPreviews) }
 
     Column(modifier = Modifier.fillMaxSize().padding(10.dp, 15.dp)) {
         Row(modifier = rowModifier) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = stringResource(R.string.oled_theme))
                 Text(
-                    text = stringResource(R.string.missing_feature),
+                    text = stringResource(R.string.work_in_progress),
                     color = MaterialTheme.colorScheme.secondary
                 )
             }
             Switch(
-                checked = false,
                 enabled = false,
-                onCheckedChange = { oledEnabled = it }
+                checked = enableOledTheme,
+                onCheckedChange = {
+                    enableOledTheme = it
+                    preferences.oledTheme = it
+                    preferences.persist()
+                }
             )
         }
         Row(modifier = rowModifier) {
-            Text(text = stringResource(R.string.show_previews), modifier = Modifier.weight(1f))
-
-            // TODO: make the switch work!
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = stringResource(R.string.show_previews))
+                Text(
+                    text = stringResource(R.string.only_if_supported),
+                    color = MaterialTheme.colorScheme.secondary
+                )
+            }
             Switch(
-                checked = false,
-                enabled = false,
+                checked = enableBookmarkPreviews,
                 onCheckedChange = {
-                    showPreviews = it
-                    prefs.showPreviews = showPreviews
-                    prefs.persist()
+                    enableBookmarkPreviews = it
+                    preferences.showPreviews = it
+                    preferences.persist()
                 }
             )
         }
@@ -68,16 +72,15 @@ fun SettingsPage(onLogout: () -> Unit) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = stringResource(R.string.connected_to_server))
                 Text(
-                    text = prefs.domain,
+                    text = preferences.domain,
                     color = MaterialTheme.colorScheme.secondary
                 )
             }
             TextButton(
                 onClick = {
-                    ShowToast(context, context.getString(R.string.logged_out))
+                    preferences.clear()
 
-                    val prefsManager = PreferencesManager(context)
-                    prefsManager.clear()
+                    ShowToast(context, context.getString(R.string.logged_out))
 
                     onLogout()
                 }
@@ -95,6 +98,9 @@ fun SettingsPage(onLogout: () -> Unit) {
 @Composable
 fun SettingsPreview() {
     LinkGuardianTheme {
-        SettingsPage {}
+        SettingsPage(
+            preferences = PreferencesManager(LocalContext.current),
+            onLogout = {}
+        )
     }
 }

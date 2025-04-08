@@ -23,20 +23,19 @@ import androidx.compose.ui.unit.sp
 import dev.elbullazul.linkguardian.R
 import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenBackend
 import dev.elbullazul.linkguardian.ShowToast
+import dev.elbullazul.linkguardian.backends.generic.Backend
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.storage.SCHEME_HTTP
 import dev.elbullazul.linkguardian.storage.SCHEME_HTTPS
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
-fun LoginFragment(onLogin: () -> Unit) {
+fun LoginFragment(backend: Backend, preferences: PreferencesManager, onLogin: () -> Unit) {
     val context = LocalContext.current
-    val settings = PreferencesManager(context)
-    settings.load()
 
     val useHttps = remember { mutableStateOf(true) }
-    val serverUrl = remember { mutableStateOf(settings.domain) }
-    val apiToken = remember { mutableStateOf(settings.token) }
+    val serverUrl = remember { mutableStateOf(preferences.domain) }
+    val apiToken = remember { mutableStateOf(preferences.token) }
 
     Column(
         modifier = Modifier
@@ -83,11 +82,9 @@ fun LoginFragment(onLogin: () -> Unit) {
         Button(
             modifier = Modifier.padding(vertical = 10.dp),
             onClick = {
-                val scheme = if (useHttps.value) SCHEME_HTTPS else SCHEME_HTTP
-                val domain = serverUrl.value
-                val token = apiToken.value
-
-                val backend = LinkwardenBackend(scheme, domain, token)
+                backend.scheme = if (useHttps.value) SCHEME_HTTPS else SCHEME_HTTP
+                backend.domain = serverUrl.value
+                backend.token = apiToken.value
 
                 if (!backend.isReachable()) {
                     ShowToast(context, context.getString(R.string.domain_unreachable))
@@ -96,10 +93,12 @@ fun LoginFragment(onLogin: () -> Unit) {
                     ShowToast(context, context.getString(R.string.access_denied))
                 }
                 else {
-                    settings.scheme = scheme
-                    settings.domain = domain
-                    settings.token = token
-                    settings.persist()
+                    preferences.scheme = backend.scheme
+                    preferences.domain = backend.domain
+                    preferences.token = backend.token
+
+                    // TODO: save backend type when multiple backends are supported
+                    preferences.persist()
 
                     onLogin()
                 }
@@ -114,6 +113,10 @@ fun LoginFragment(onLogin: () -> Unit) {
 @Composable
 fun LoginPreview() {
     LinkGuardianTheme(darkTheme = true) {
-        LoginFragment(onLogin = {})
+        LoginFragment(
+            backend = LinkwardenBackend("", "", ""),
+            preferences = PreferencesManager(LocalContext.current),
+            onLogin = {}
+        )
     }
 }

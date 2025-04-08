@@ -22,7 +22,6 @@ interface Backend {
     suspend fun getBookmarks(): List<Bookmark>
     fun getCollections(): List<Collection>
     fun getTags(): List<Tag>
-
     fun getBookmark(id: Int): Bookmark
     fun getCollection(id: Int): Collection
     fun getTag(id: Int): Tag
@@ -33,8 +32,7 @@ interface Backend {
     fun isAuthorized(): Boolean
     fun isReachable(): Boolean {
         try {
-            val future =
-                ResponseFuture()
+            val future = ResponseFuture()
             val url = HttpUrl.Builder()
                 .scheme(scheme)
                 .host(domain)
@@ -47,8 +45,7 @@ interface Backend {
 
             val result = future.get()
             return result.isSuccessful
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             println(e.message)
         }
 
@@ -57,8 +54,7 @@ interface Backend {
 
     fun get(route: String, args: Map<String, String> = mapOf()): String {
         try {
-            val future =
-                ResponseFuture()
+            val future = ResponseFuture()
             val url = HttpUrl.Builder()
                 .scheme(scheme)
                 .host(domain)
@@ -76,8 +72,7 @@ interface Backend {
 
             val body = future.get().body!!.string()
             return body
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             println(e.message)
         }
 
@@ -86,8 +81,7 @@ interface Backend {
 
     fun post(route: String, payload: String, args: Map<String, String> = mapOf()): Boolean {
         try {
-            val future =
-                ResponseFuture()
+            val future = ResponseFuture()
             val url = HttpUrl.Builder()
                 .scheme(scheme)
                 .host(domain)
@@ -98,9 +92,7 @@ interface Backend {
 
             val request = Request.Builder()
                 .url(url.build())
-                .post(
-                    payload.toRequestBody(MEDIA_TYPE_JSON)
-                )
+                .post(payload.toRequestBody(MEDIA_TYPE_JSON))
                 .header("Authorization", "Bearer $token")
                 .build()
 
@@ -108,16 +100,11 @@ interface Backend {
 
             val response = future.get()
             return response.isSuccessful
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             println(e.message)
         }
 
         return false
-    }
-
-    fun buildUrl(resource: String): String {
-        return "$scheme://$domain/$resource"
     }
 
     companion object {
