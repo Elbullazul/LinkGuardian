@@ -1,4 +1,4 @@
-package dev.elbullazul.linkguardian.backends.generic
+package dev.elbullazul.linkguardian.data.generic
 
 interface Tag {
     val id: Int

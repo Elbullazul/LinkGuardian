@@ -7,7 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import dev.elbullazul.linkguardian.R
-import dev.elbullazul.linkguardian.backends.generic.Collection
+import dev.elbullazul.linkguardian.data.generic.Collection
 
 @Composable
 fun CollectionPickerDialog(collections: List<Collection>, selected: Int, onSelect: (collectionId: Int) -> Unit) {

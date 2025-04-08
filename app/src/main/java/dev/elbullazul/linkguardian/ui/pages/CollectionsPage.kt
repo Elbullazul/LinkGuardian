@@ -9,9 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenBackend
-import dev.elbullazul.linkguardian.ui.fragments.ComposableFragment
+import dev.elbullazul.linkguardian.backends.LinkwardenBackend
 import dev.elbullazul.linkguardian.storage.PreferencesManager
+import dev.elbullazul.linkguardian.ui.fragments.CollectionFragment
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
@@ -26,7 +26,7 @@ fun CollectionsPage() {
 
     LazyColumn(modifier = Modifier.fillMaxWidth().padding(horizontal = 6.dp)) {
         items(collections) { collection ->
-            ComposableFragment(collection)
+            CollectionFragment(collection)
         }
     }
 }

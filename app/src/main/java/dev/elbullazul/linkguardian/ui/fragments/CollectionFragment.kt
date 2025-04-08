@@ -14,14 +14,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.elbullazul.linkguardian.R
-import dev.elbullazul.linkguardian.backends.generic.Collection
-import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenCollection
+import dev.elbullazul.linkguardian.data.generic.Collection
+import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenCollection
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
-fun ComposableFragment(collection: Collection) {
-    collection as LinkwardenCollection
-
+fun CollectionFragment(collection: Collection) {
     Row {
         Column {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -35,7 +33,9 @@ fun ComposableFragment(collection: Collection) {
                     text = "${collection.bookmarkCount()} ${stringResource(R.string.links_or_link)}"
                 )
             }
-//            Text(text = collection.shortDescription())
+//            if (collection is Describable) {
+//                Text(text = collection.truncatedDescription())
+//            }
         }
     }
 }
@@ -44,10 +44,12 @@ fun ComposableFragment(collection: Collection) {
 @Composable
 fun CollectionfragmentPreview() {
     LinkGuardianTheme(darkTheme = true) {
-        ComposableFragment(LinkwardenCollection(
+        CollectionFragment(
+            LinkwardenCollection(
             id = 0,
             name = "test collection",
             description = "test collection, internal use only. very long to test the short description function, so keep typing until we hit the ellipsis..."
-        ))
+        )
+        )
     }
 }

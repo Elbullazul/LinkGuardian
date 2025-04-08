@@ -17,8 +17,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,7 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenBackend
+import dev.elbullazul.linkguardian.backends.LinkwardenBackend
 import dev.elbullazul.linkguardian.navigation.AppNavController
 import dev.elbullazul.linkguardian.navigation.NAV_ROUTE_COLLECTIONS
 import dev.elbullazul.linkguardian.navigation.NAV_ROUTE_DASHBOARD
@@ -53,7 +53,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun App() {
     val context = LocalContext.current
-    val prefs = PreferencesManager(context)
+    val preferences = PreferencesManager(context)
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
@@ -62,10 +62,10 @@ fun App() {
     val displayBackButton = rememberSaveable { (mutableStateOf(false)) }
     val displayFloatingButton = rememberSaveable { (mutableStateOf(false)) }
 
-    if (prefs.load())
+    if (preferences.load())
         loggedIn.value = true
 
-    val backend = LinkwardenBackend(prefs.scheme, prefs.domain, prefs.token)
+    val backend = LinkwardenBackend(preferences.scheme, preferences.domain, preferences.token)
 
     when (navBackStackEntry?.destination?.route) {
         NAV_ROUTE_LOGIN -> {
@@ -99,6 +99,7 @@ fun App() {
         }
     }
 
+    // TODO: use `preferences.oledTheme` to enable/disable dark theme when building the theme
     LinkGuardianTheme {
         Scaffold(
             topBar = {
@@ -143,7 +144,7 @@ fun App() {
             Column(modifier = Modifier.padding(innerPadding)) {
                 AppNavController(
                     navController = navController,
-                    preferences = prefs,
+                    preferences = preferences,
                     backend = backend,
                     startDestination = if (loggedIn.value) NAV_ROUTE_DASHBOARD else NAV_ROUTE_LOGIN
                 )

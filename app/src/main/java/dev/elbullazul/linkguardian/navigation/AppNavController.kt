@@ -4,11 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import dev.elbullazul.linkguardian.backends.generic.Backend
+import dev.elbullazul.linkguardian.backends.Backend
 import dev.elbullazul.linkguardian.storage.PreferencesManager
-import dev.elbullazul.linkguardian.ui.pages.CollectionsPage
-import dev.elbullazul.linkguardian.ui.pages.BookmarksPage
 import dev.elbullazul.linkguardian.ui.fragments.LoginFragment
+import dev.elbullazul.linkguardian.ui.pages.BookmarksPage
+import dev.elbullazul.linkguardian.ui.pages.CollectionsPage
 import dev.elbullazul.linkguardian.ui.pages.SettingsPage
 import dev.elbullazul.linkguardian.ui.pages.SubmitBookmarkPage
 

@@ -1,6 +1,7 @@
-package dev.elbullazul.linkguardian.backends.linkwarden
+package dev.elbullazul.linkguardian.data.linkwarden
 
-import dev.elbullazul.linkguardian.backends.generic.User
+import dev.elbullazul.linkguardian.data.extensions.Creatable
+import dev.elbullazul.linkguardian.data.generic.User
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -15,5 +16,5 @@ class LinkwardenUser(
     val archiveAsPDF: Boolean? = false,
     val emailVerified: String? = "",
     val subscriptions: String? = "",
-    val createdAt: String = ""             // TODO: use date time
-): User
+    override val createdAt: String = ""             // TODO: use date time
+): User, Creatable

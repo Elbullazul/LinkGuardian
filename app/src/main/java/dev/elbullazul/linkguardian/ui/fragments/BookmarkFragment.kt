@@ -12,9 +12,8 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
@@ -22,17 +21,19 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenCollection
-import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenLink
-import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenTag
-import dev.elbullazul.linkguardian.backends.generic.Bookmark
+import dev.elbullazul.linkguardian.data.extensions.Describable
+import dev.elbullazul.linkguardian.data.extensions.Previewable
+import dev.elbullazul.linkguardian.data.generic.Bookmark
+import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenCollection
+import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenLink
+import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenTag
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
 fun BookmarkFragment(link: Bookmark, serverUrl: String, showPreviews: Boolean) {
-    link as LinkwardenLink
     val uriHandler = LocalUriHandler.current
 
     Card(
@@ -47,8 +48,7 @@ fun BookmarkFragment(link: Bookmark, serverUrl: String, showPreviews: Boolean) {
                 .fillMaxWidth()
                 .padding(10.dp, 5.dp)
         ) {
-            // TODO: rework to only show preview if enabled and service provides previews
-            if (showPreviews) {
+            if (link is Previewable && showPreviews) {
                 AsyncImage(
                     model = "$serverUrl/${link.preview}",
                     contentDescription = "",
@@ -64,7 +64,9 @@ fun BookmarkFragment(link: Bookmark, serverUrl: String, showPreviews: Boolean) {
                     Text(LinkedText(link.name), Modifier.fillMaxWidth())
                     Icon(Icons.Filled.MoreVert, "")
                 }
-                Text(link.shortDescription())
+                if (link is Describable) {
+                    Text(link.truncatedDescription())
+                }
                 TagFragment(link)
             }
         }

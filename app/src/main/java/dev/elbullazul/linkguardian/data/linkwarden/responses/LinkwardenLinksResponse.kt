@@ -1,6 +1,6 @@
-package dev.elbullazul.linkguardian.backends.linkwarden.responses
+package dev.elbullazul.linkguardian.data.linkwarden.responses
 
-import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenLink
+import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenLink
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

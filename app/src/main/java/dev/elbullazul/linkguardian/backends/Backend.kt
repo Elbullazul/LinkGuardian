@@ -1,6 +1,9 @@
-package dev.elbullazul.linkguardian.backends.generic
+package dev.elbullazul.linkguardian.backends
 
-import dev.elbullazul.linkguardian.backends.SupportedBackends
+import dev.elbullazul.linkguardian.data.generic.Bookmark
+import dev.elbullazul.linkguardian.data.generic.Collection
+import dev.elbullazul.linkguardian.data.generic.Tag
+import dev.elbullazul.linkguardian.data.generic.User
 import dev.elbullazul.linkguardian.futures.ResponseFuture
 import okhttp3.HttpUrl
 import okhttp3.MediaType.Companion.toMediaType

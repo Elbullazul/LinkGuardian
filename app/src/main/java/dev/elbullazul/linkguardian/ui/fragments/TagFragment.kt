@@ -8,9 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.elbullazul.linkguardian.backends.generic.Bookmark
-import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenLink
-import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenTag
+import dev.elbullazul.linkguardian.data.generic.Bookmark
+import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenLink
+import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenTag
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable

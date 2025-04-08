@@ -21,9 +21,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.elbullazul.linkguardian.R
-import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenBackend
 import dev.elbullazul.linkguardian.ShowToast
-import dev.elbullazul.linkguardian.backends.generic.Backend
+import dev.elbullazul.linkguardian.backends.Backend
+import dev.elbullazul.linkguardian.backends.LinkwardenBackend
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.storage.SCHEME_HTTP
 import dev.elbullazul.linkguardian.storage.SCHEME_HTTPS

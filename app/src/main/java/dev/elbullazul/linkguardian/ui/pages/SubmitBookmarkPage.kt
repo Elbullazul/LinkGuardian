@@ -21,13 +21,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.elbullazul.linkguardian.R
-import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenBackend
-import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenCollection
-import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenLink
-import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenTag
 import dev.elbullazul.linkguardian.ShowToast
-import dev.elbullazul.linkguardian.backends.generic.Backend
-import dev.elbullazul.linkguardian.backends.generic.Collection
+import dev.elbullazul.linkguardian.backends.Backend
+import dev.elbullazul.linkguardian.backends.LinkwardenBackend
+import dev.elbullazul.linkguardian.data.generic.Collection
+import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenCollection
+import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenLink
+import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenTag
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.dialogs.CollectionPickerDialog
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
@@ -119,6 +119,7 @@ fun SubmitBookmarkPage(backend: Backend, preferences: PreferencesManager, onSubm
             }
             Row(modifier = Modifier.weight(1f)) {}
             Button(onClick = {
+                // TODO: replace direct instantiation by factory method
                 val link = LinkwardenLink(
                     id = -1,
                     name = name.value,

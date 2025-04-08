@@ -21,11 +21,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.elbullazul.linkguardian.backends.generic.Backend
-import dev.elbullazul.linkguardian.backends.linkwarden.LinkwardenBackend
-import dev.elbullazul.linkguardian.backends.generic.Bookmark
-import dev.elbullazul.linkguardian.ui.fragments.BookmarkFragment
+import dev.elbullazul.linkguardian.backends.Backend
+import dev.elbullazul.linkguardian.backends.LinkwardenBackend
+import dev.elbullazul.linkguardian.data.generic.Bookmark
 import dev.elbullazul.linkguardian.storage.PreferencesManager
+import dev.elbullazul.linkguardian.ui.fragments.BookmarkFragment
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
