@@ -61,7 +61,7 @@ fun BookmarkFragment(link: Bookmark, serverUrl: String, showPreviews: Boolean) {
             }
             Column {
                 Row {
-                    Text(LinkedText(link.name), Modifier.fillMaxWidth())
+                    Text(linkedText(link.name), Modifier.fillMaxWidth())
                     Icon(Icons.Filled.MoreVert, "")
                 }
                 if (link is Describable) {
@@ -74,7 +74,7 @@ fun BookmarkFragment(link: Bookmark, serverUrl: String, showPreviews: Boolean) {
 }
 
 @Composable
-fun LinkedText(text: String): AnnotatedString {
+fun linkedText(text: String): AnnotatedString {
     return buildAnnotatedString {
         append(text)
         addStyle(
