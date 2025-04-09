@@ -55,11 +55,13 @@ fun SettingsPage(preferences: PreferencesManager, onLogout: () -> Unit) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = stringResource(R.string.show_previews))
                 Text(
-                    text = stringResource(R.string.only_if_supported),
+                    text = stringResource(R.string.work_in_progress),
+//                    text = stringResource(R.string.only_if_supported),
                     color = MaterialTheme.colorScheme.secondary
                 )
             }
             Switch(
+                enabled = false,
                 checked = enableBookmarkPreviews,
                 onCheckedChange = {
                     enableBookmarkPreviews = it
