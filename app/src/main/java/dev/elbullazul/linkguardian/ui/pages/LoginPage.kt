@@ -1,4 +1,4 @@
-package dev.elbullazul.linkguardian.ui.fragments
+package dev.elbullazul.linkguardian.ui.pages
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,7 +30,7 @@ import dev.elbullazul.linkguardian.storage.SCHEME_HTTPS
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
-fun LoginFragment(backend: Backend, preferences: PreferencesManager, onLogin: () -> Unit) {
+fun LoginPage(backend: Backend, preferences: PreferencesManager, onLogin: () -> Unit) {
     val context = LocalContext.current
 
     val useHttps = remember { mutableStateOf(true) }
@@ -113,7 +113,7 @@ fun LoginFragment(backend: Backend, preferences: PreferencesManager, onLogin: ()
 @Composable
 fun LoginPreview() {
     LinkGuardianTheme(darkTheme = true) {
-        LoginFragment(
+        LoginPage(
             backend = LinkwardenBackend("", "", ""),
             preferences = PreferencesManager(LocalContext.current),
             onLogin = {}

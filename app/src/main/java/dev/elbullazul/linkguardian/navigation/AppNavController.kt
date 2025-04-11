@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import dev.elbullazul.linkguardian.backends.Backend
 import dev.elbullazul.linkguardian.storage.PreferencesManager
-import dev.elbullazul.linkguardian.ui.fragments.LoginFragment
+import dev.elbullazul.linkguardian.ui.pages.LoginPage
 import dev.elbullazul.linkguardian.ui.pages.BookmarksPage
 import dev.elbullazul.linkguardian.ui.pages.CollectionsPage
 import dev.elbullazul.linkguardian.ui.pages.SettingsPage
@@ -30,7 +30,7 @@ fun AppNavController(
         }
         composable(NAV_ROUTE_LOGIN) {
             // TODO: rework to support dynamically swapping backends (container class?)
-            LoginFragment(
+            LoginPage(
                 backend = backend,
                 preferences = preferences,
                 onLogin = { navController.navigate(NAV_ROUTE_DASHBOARD) }
