@@ -10,11 +10,11 @@ An Android client for [Linkwarden](https://github.com/linkwarden/linkwarden). Bu
 - [x] Dark theme
 - [x] Browse links in the app
 - [x] Add links
-- [ ] Share target for quick sharing
+- [x] Receive external links
 - [ ] Search
-- [ ] Edit links
+- [ ] Edit links, tags and collections
 - [ ] Offline mode
-- [ ] Open archived link copy
+- [ ] Open archived content
 
 ### Dependencies
 - [OkHttp](https://github.com/square/okhttp) for making HTTP requests
