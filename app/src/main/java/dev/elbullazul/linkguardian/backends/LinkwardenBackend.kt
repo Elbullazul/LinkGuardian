@@ -108,7 +108,6 @@ class LinkwardenBackend(
     // unnecessary?
     fun getDashboardData() {
         val data = get(ROUTE_DASHBOARD)
-        println(data)
     }
 
     override fun createBookmark(link: Bookmark): Boolean {
