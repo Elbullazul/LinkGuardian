@@ -1,5 +1,6 @@
 package dev.elbullazul.linkguardian.ui.pages
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +29,7 @@ import dev.elbullazul.linkguardian.data.generic.Collection
 import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenCollection
 import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenLink
 import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenTag
+import dev.elbullazul.linkguardian.findActivity
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.dialogs.CollectionPickerDialog
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
@@ -38,7 +40,14 @@ fun SubmitBookmarkPage(backend: Backend, preferences: PreferencesManager, onSubm
     val showCollectionPicker = rememberSaveable { (mutableStateOf(false)) }
     var collections = remember { mutableListOf<Collection>() }
 
-    val linkUrl = remember { mutableStateOf("") }
+    // TODO: only process once! Currently, every time we want to manually add a link, the previous submitted URL remains
+    val intentLink = context.findActivity()?.intent?.getStringExtra(Intent.EXTRA_TEXT)
+    val sharedLink = if (!intentLink.isNullOrBlank())
+        intentLink.toString()
+    else
+        ""
+
+    val linkUrl = remember { mutableStateOf(sharedLink) }
     val tags = remember { mutableStateOf("") }
     val name = remember { mutableStateOf("") }
     val description = remember { mutableStateOf("") }
@@ -149,6 +158,9 @@ fun castTags(inputTags: String): List<LinkwardenTag> {
     var linkTags = arrayListOf<LinkwardenTag>()
 
     for (tag in inputTags.split(",")) {
+        if (tag.isBlank())
+            continue
+
         linkTags.add(
             LinkwardenTag(
                 id = -1,

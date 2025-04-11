@@ -1,5 +1,9 @@
 package dev.elbullazul.linkguardian
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -146,9 +150,23 @@ fun App() {
                     navController = navController,
                     preferences = preferences,
                     backend = backend,
-                    startDestination = if (loggedIn.value) NAV_ROUTE_DASHBOARD else NAV_ROUTE_LOGIN
+                    startDestination = if (!loggedIn.value) {
+                        NAV_ROUTE_LOGIN
+                    }
+                    else if (context.findActivity()?.intent?.action == Intent.ACTION_SEND) {
+                        NAV_ROUTE_SUBMIT_LINK
+                    }
+                    else {
+                        NAV_ROUTE_DASHBOARD
+                    }
                 )
             }
         }
     }
+}
+
+fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
 }
