@@ -26,7 +26,7 @@ class LinkwardenBackend(
 ) : Backend {
     override val client: OkHttpClient = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
-    override val type = SupportedBackends.Linkwarden
+    override val type = BackendTypes.Linkwarden
 
     // store last link ID for cursor pagination (https://www.prisma.io/docs/orm/prisma-client/queries/pagination#cursor-based-pagination)
     // collection and tag endpoints return all objects without paginating

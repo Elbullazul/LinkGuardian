@@ -1,6 +1,6 @@
 package dev.elbullazul.linkguardian.backends
 
-enum class SupportedBackends {
+enum class BackendTypes {
     Linkwarden,
-//    Hoarder
+//    Karakeep (aka Hoarder)
 }

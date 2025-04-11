@@ -16,7 +16,7 @@ interface Backend {
     var domain: String
     var token: String
     val client: OkHttpClient
-    val type: SupportedBackends
+    val type: BackendTypes
 
     var hasBookmarks: Boolean
     var hasCollections: Boolean
