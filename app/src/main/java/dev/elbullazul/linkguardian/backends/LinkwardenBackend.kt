@@ -111,6 +111,8 @@ class LinkwardenBackend(
     }
 
     override fun createBookmark(link: Bookmark): Boolean {
+        println(link.tags)
+
         val payload = json.encodeToString<LinkwardenLink>(link as LinkwardenLink)
 
         return post(ROUTE_LINKS, payload)

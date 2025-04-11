@@ -46,10 +46,10 @@ fun CollectionfragmentPreview() {
     LinkGuardianTheme(darkTheme = true) {
         CollectionFragment(
             LinkwardenCollection(
-            id = 0,
-            name = "test collection",
-            description = "test collection, internal use only. very long to test the short description function, so keep typing until we hit the ellipsis..."
-        )
+                id = 0,
+                name = "test collection",
+                description = "test collection, internal use only. very long to test the short description function, so keep typing until we hit the ellipsis..."
+            )
         )
     }
 }

@@ -25,10 +25,8 @@ import dev.elbullazul.linkguardian.R
 import dev.elbullazul.linkguardian.ShowToast
 import dev.elbullazul.linkguardian.backends.Backend
 import dev.elbullazul.linkguardian.backends.LinkwardenBackend
+import dev.elbullazul.linkguardian.data.DataFactory
 import dev.elbullazul.linkguardian.data.generic.Collection
-import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenCollection
-import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenLink
-import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenTag
 import dev.elbullazul.linkguardian.findActivity
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.dialogs.CollectionPickerDialog
@@ -37,15 +35,14 @@ import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 @Composable
 fun SubmitBookmarkPage(backend: Backend, preferences: PreferencesManager, onSubmit: () -> Unit) {
     val context = LocalContext.current
+    val typeFactory = DataFactory(backend.type)
+    var collections = backend.getCollections().toMutableList()
+
     val showCollectionPicker = rememberSaveable { (mutableStateOf(false)) }
-    var collections = remember { mutableListOf<Collection>() }
 
     // TODO: only process once! Currently, every time we want to manually add a link, the previous submitted URL remains
     val intentLink = context.findActivity()?.intent?.getStringExtra(Intent.EXTRA_TEXT)
-    val sharedLink = if (!intentLink.isNullOrBlank())
-        intentLink.toString()
-    else
-        ""
+    val sharedLink = if (!intentLink.isNullOrBlank())  intentLink.toString() else ""
 
     val linkUrl = remember { mutableStateOf(sharedLink) }
     val tags = remember { mutableStateOf("") }
@@ -54,8 +51,7 @@ fun SubmitBookmarkPage(backend: Backend, preferences: PreferencesManager, onSubm
     val collectionIndex = remember { mutableIntStateOf(-1) }
 
     if (showCollectionPicker.value) {
-        collections = backend.getCollections().toMutableList()
-
+        // we pass the collection list so that we can select the appropriate entry if the dialog is re-opened
         CollectionPickerDialog(
             collections = collections,
             selected = collectionIndex.intValue
@@ -128,15 +124,13 @@ fun SubmitBookmarkPage(backend: Backend, preferences: PreferencesManager, onSubm
             }
             Row(modifier = Modifier.weight(1f)) {}
             Button(onClick = {
-                // TODO: replace direct instantiation by factory method
-                val link = LinkwardenLink(
-                    id = -1,
-                    name = name.value,
+                val link = typeFactory.bookmark(
                     url = linkUrl.value,
+                    name = name.value,
                     description = description.value,
-                    tags = castTags(tags.value),
+                    tags = tags.value.split(","),
                     collection = when (collectionIndex.intValue > -1) {
-                        true -> collections[collectionIndex.intValue] as LinkwardenCollection
+                        true -> collections[collectionIndex.intValue]
                         false -> null
                     }
                 )
@@ -152,24 +146,6 @@ fun SubmitBookmarkPage(backend: Backend, preferences: PreferencesManager, onSubm
             }
         }
     }
-}
-
-fun castTags(inputTags: String): List<LinkwardenTag> {
-    var linkTags = arrayListOf<LinkwardenTag>()
-
-    for (tag in inputTags.split(",")) {
-        if (tag.isBlank())
-            continue
-
-        linkTags.add(
-            LinkwardenTag(
-                id = -1,
-                name = tag
-            )
-        )
-    }
-
-    return linkTags
 }
 
 @Preview(showBackground = true)

@@ -32,7 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import dev.elbullazul.linkguardian.backends.LinkwardenBackend
+import dev.elbullazul.linkguardian.data.DataFactory
 import dev.elbullazul.linkguardian.navigation.AppNavController
 import dev.elbullazul.linkguardian.navigation.NAV_ROUTE_COLLECTIONS
 import dev.elbullazul.linkguardian.navigation.NAV_ROUTE_DASHBOARD
@@ -57,19 +57,19 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun App() {
     val context = LocalContext.current
-    val preferences = PreferencesManager(context)
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-    val loggedIn = rememberSaveable { (mutableStateOf(false)) }
+    val preferences = PreferencesManager(context)
+    preferences.load()
+
     val displayBottomBar = rememberSaveable { (mutableStateOf(false)) }
     val displayBackButton = rememberSaveable { (mutableStateOf(false)) }
     val displayFloatingButton = rememberSaveable { (mutableStateOf(false)) }
+    val loggedIn = rememberSaveable { (mutableStateOf(preferences.validCredentials())) }
 
-    if (preferences.load())
-        loggedIn.value = true
-
-    val backend = LinkwardenBackend(preferences.scheme, preferences.domain, preferences.token)
+    val dataFactory = DataFactory(preferences.serverType)
+    val backend = dataFactory.backend(preferences.scheme, preferences.domain, preferences.token)
 
     when (navBackStackEntry?.destination?.route) {
         NAV_ROUTE_LOGIN -> {
@@ -152,11 +152,9 @@ fun App() {
                     backend = backend,
                     startDestination = if (!loggedIn.value) {
                         NAV_ROUTE_LOGIN
-                    }
-                    else if (context.findActivity()?.intent?.action == Intent.ACTION_SEND) {
+                    } else if (context.findActivity()?.intent?.action == Intent.ACTION_SEND) {
                         NAV_ROUTE_SUBMIT_LINK
-                    }
-                    else {
+                    } else {
                         NAV_ROUTE_DASHBOARD
                     }
                 )

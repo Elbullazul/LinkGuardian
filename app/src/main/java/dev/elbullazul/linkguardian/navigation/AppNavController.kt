@@ -50,7 +50,9 @@ fun AppNavController(
             )
         }
         composable(NAV_ROUTE_COLLECTIONS) {
-            CollectionsPage()
+            CollectionsPage(
+                backend = backend
+            )
         }
     }
 }
