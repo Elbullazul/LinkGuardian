@@ -1,9 +1,11 @@
 # LinkGuardian
 An Android client for [Linkwarden](https://github.com/linkwarden/linkwarden). Built with Kotlin and Jetpack compose.
 
-| Light theme | Dark theme |
-| --- | --- |
-| ![preview-light](https://github.com/Elbullazul/linkguardian/blob/master/res/preview.png) | ![preview-dark](https://github.com/Elbullazul/linkguardian/blob/master/res/preview-dark.png) |
+<a href="https://apt.izzysoft.de/fdroid/index/apk/dev.elbullazul.linkguardian"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Download from IzzyOnDroid" width="200" height="80"/></a>
+
+| | | | |
+| --- | --- | -- | -- |
+| ![preview-light](https://github.com/Elbullazul/linkguardian/blob/master/res/preview.png) | ![preview-light](https://github.com/Elbullazul/linkguardian/blob/master/res/add-link.png) | ![preview-dark](https://github.com/Elbullazul/linkguardian/blob/master/res/preview-dark.png) | ![preview-light](https://github.com/Elbullazul/linkguardian/blob/master/res/add-link-dark.png) |
 
 ### Features (work in progress)
 - [x] Login with API token
