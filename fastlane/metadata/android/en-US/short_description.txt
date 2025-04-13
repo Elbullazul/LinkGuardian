@@ -1,1 +1,1 @@
-Android client for Linkwarden.
+Android client for Linkwarden built with Jetpack Compose
