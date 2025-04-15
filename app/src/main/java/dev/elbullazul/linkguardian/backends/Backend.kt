@@ -25,10 +25,10 @@ interface Backend {
     suspend fun getBookmarks(): List<Bookmark>
     fun getCollections(): List<Collection>
     fun getTags(): List<Tag>
-    fun getBookmark(id: Int): Bookmark
-    fun getCollection(id: Int): Collection
-    fun getTag(id: Int): Tag
-    fun getUser(id: Int): User
+    fun getBookmark(id: String): Bookmark
+    fun getCollection(id: String): Collection
+    fun getTag(id: String): Tag
+    fun getUser(id: String): User
 
     fun createBookmark(link: Bookmark): Boolean
 
@@ -47,6 +47,8 @@ interface Backend {
             client.newCall(request).enqueue(future)
 
             val result = future.get()
+            future.get().close()
+
             return result.isSuccessful
         } catch (e: Exception) {
             println(e.message)
@@ -74,6 +76,8 @@ interface Backend {
             client.newCall(request).enqueue(future)
 
             val body = future.get().body!!.string()
+            future.get().close()
+
             return body
         } catch (e: Exception) {
             println(e.message)
@@ -101,8 +105,10 @@ interface Backend {
 
             client.newCall(request).enqueue(future)
 
-            val response = future.get()
-            return response.isSuccessful
+            val result = future.get().isSuccessful
+            future.get().close()
+
+            return result
         } catch (e: Exception) {
             println(e.message)
         }

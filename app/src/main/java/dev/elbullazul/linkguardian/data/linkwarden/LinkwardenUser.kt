@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 class LinkwardenUser(
     override val id: Int,
-    override val username: String,
+    override val username: String = "",
     val email: String? = "",
     val name: String? = "",
     val image: String? = "",

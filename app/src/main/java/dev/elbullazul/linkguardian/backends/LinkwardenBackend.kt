@@ -70,27 +70,27 @@ class LinkwardenBackend(
         return response.tags
     }
 
-    override fun getBookmark(id: Int): Bookmark {
+    override fun getBookmark(id: String): Bookmark {
         val data = get("$ROUTE_LINKS/$id")
         val response = json.decodeFromString<LinkwardenLinkResponse>(data)
 
         return response.link
     }
 
-    override fun getCollection(id: Int): Collection {
+    override fun getCollection(id: String): Collection {
         val data = get("$ROUTE_COLLECTIONS/$id")
         val response = json.decodeFromString<LinkwardenCollectionResponse>(data)
 
         return response.collection
     }
 
-    override fun getTag(id: Int): Tag {
+    override fun getTag(id: String): Tag {
         val data = get("$ROUTE_TAGS/$id")
 
         TODO("No API route for specific tag exists")
     }
 
-    override fun getUser(id: Int): User {
+    override fun getUser(id: String): User {
         val data = get("$ROUTE_USERS/$id")
         val response = json.decodeFromString<LinkwardenUserResponse>(data)
 
@@ -111,8 +111,6 @@ class LinkwardenBackend(
     }
 
     override fun createBookmark(link: Bookmark): Boolean {
-        println(link.tags)
-
         val payload = json.encodeToString<LinkwardenLink>(link as LinkwardenLink)
 
         return post(ROUTE_LINKS, payload)
@@ -133,8 +131,10 @@ class LinkwardenBackend(
                 .build()
 
             client.newCall(request).enqueue(future)
+            val result = future.get().isSuccessful
+            future.get().close()
 
-            return future.get().isSuccessful
+            return result
         }
         catch (e: Exception) {
             println(e.message)

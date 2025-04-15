@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class LinkwardenCollection(
-    override val id: Int,
+    val id: Int,
     override val name: String,
     override val description: String = "",
     override val icon: String? = null,
@@ -35,6 +35,10 @@ class LinkwardenCollection(
     private val parent: LinkwardenCollection? = null
 
 ) : Collection, Describable, Creatable, Updateable, Colorizable, Iconifiable {
+    override fun getId(): String {
+        return id.toString()
+    }
+
     override fun bookmarkCount(): Int {
         return linkCount.count
     }

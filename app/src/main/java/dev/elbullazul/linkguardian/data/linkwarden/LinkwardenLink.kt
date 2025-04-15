@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class LinkwardenLink(
-    override val id: Int,
+    val id: Int,
     override val name: String,
     val type: String = "",
     override val description: String,
@@ -33,5 +33,9 @@ class LinkwardenLink(
     override val updatedAt: String = "",
     override val tags: List<LinkwardenTag> = listOf(),
     val collection: LinkwardenCollection? = null,
-    val pinnedBy: List<Int> = listOf()
-) : Bookmark, Describable, Previewable, Creatable, Updateable, Colorizable, Iconifiable
+    val pinnedBy: List<LinkwardenUser> = listOf()
+) : Bookmark, Describable, Previewable, Creatable, Updateable, Colorizable, Iconifiable {
+    override fun getId(): String {
+        return id.toString()
+    }
+}
