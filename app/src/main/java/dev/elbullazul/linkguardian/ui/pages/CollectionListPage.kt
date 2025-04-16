@@ -14,10 +14,10 @@ import dev.elbullazul.linkguardian.ui.fragments.CollectionFragment
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
-fun CollectionsPage(backend: Backend) {
+fun CollectionListPage(backend: Backend, onClick: (String) -> Unit) {
     LazyColumn(modifier = Modifier.fillMaxWidth().padding(horizontal = 6.dp)) {
         items(backend.getCollections()) { collection ->
-            CollectionFragment(collection)
+            CollectionFragment(collection, onClick)
         }
     }
 }
@@ -26,6 +26,9 @@ fun CollectionsPage(backend: Backend) {
 @Composable
 fun CollectionListPreview() {
     LinkGuardianTheme(darkTheme = true) {
-        CollectionsPage(LinkwardenBackend("","",""))
+        CollectionListPage(
+            onClick = {},
+            backend = LinkwardenBackend("","","")
+        )
     }
 }

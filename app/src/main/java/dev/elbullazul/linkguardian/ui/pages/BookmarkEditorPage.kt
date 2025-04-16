@@ -26,32 +26,60 @@ import dev.elbullazul.linkguardian.ShowToast
 import dev.elbullazul.linkguardian.backends.Backend
 import dev.elbullazul.linkguardian.backends.LinkwardenBackend
 import dev.elbullazul.linkguardian.data.DataFactory
-import dev.elbullazul.linkguardian.data.generic.Collection
+import dev.elbullazul.linkguardian.data.extensions.Collectionable
+import dev.elbullazul.linkguardian.data.extensions.Describable
 import dev.elbullazul.linkguardian.findActivity
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.dialogs.CollectionPickerDialog
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
-fun SubmitBookmarkPage(backend: Backend, preferences: PreferencesManager, onSubmit: () -> Unit) {
+fun BookmarkEditorPage(bookmarkId: String? = null, backend: Backend, preferences: PreferencesManager, onSubmit: () -> Unit) {
     val context = LocalContext.current
     val typeFactory = DataFactory(backend.type)
-    var collections = backend.getCollections().toMutableList()
+    val update = remember { mutableStateOf(false) }
+    val collections = backend.getCollections().toMutableList()
+    val assignExisting = remember { mutableStateOf(true) }
 
-    val showCollectionPicker = rememberSaveable { (mutableStateOf(false)) }
-
-    // TODO: only process once! Currently, every time we want to manually add a link, the previous submitted URL remains
-    val intentLink = context.findActivity()?.intent?.getStringExtra(Intent.EXTRA_TEXT)
-    val sharedLink = if (!intentLink.isNullOrBlank())  intentLink.toString() else ""
-
-    val linkUrl = remember { mutableStateOf(sharedLink) }
+    val id = remember { mutableStateOf("-1") }
+    val url = remember { mutableStateOf("") }
     val tags = remember { mutableStateOf("") }
     val name = remember { mutableStateOf("") }
     val description = remember { mutableStateOf("") }
     val collectionIndex = remember { mutableIntStateOf(-1) }
+    val showCollectionPicker = rememberSaveable { (mutableStateOf(false)) }
+
+    // TODO: only process once! Currently, every time we want to manually add a link, the previous submitted URL remains
+    val intentLink = context.findActivity()?.intent?.getStringExtra(Intent.EXTRA_TEXT)
+    if (!intentLink.isNullOrBlank())
+        url.value = intentLink.toString()
+
+    else if (!bookmarkId.isNullOrBlank() && assignExisting.value) {
+        val bookmark = backend.getBookmark(bookmarkId)
+
+        update.value = true
+        id.value = bookmark.getId()
+        url.value = bookmark.url
+        name.value = bookmark.name
+        tags.value = bookmark.tagsToString()
+
+        if (bookmark is Collectionable) {
+            val collectionId = bookmark.getCollectionId()
+
+            collectionIndex.intValue = collections.indexOfFirst {
+                it.getId() == collectionId
+            }
+        }
+
+        if (bookmark is Describable)
+            description.value = bookmark.description.toString()
+
+        assignExisting.value = false
+    }
 
     if (showCollectionPicker.value) {
         // we pass the collection list so that we can select the appropriate entry if the dialog is re-opened
+        // TODO: only pass collection ID. Find it in backend.getCollections() with indexOfFirst { it.getId() == collectionId }
         CollectionPickerDialog(
             collections = collections,
             selected = collectionIndex.intValue
@@ -72,8 +100,8 @@ fun SubmitBookmarkPage(backend: Backend, preferences: PreferencesManager, onSubm
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 5.dp),
-            value = linkUrl.value,
-            onValueChange = { linkUrl.value = it },
+            value = url.value,
+            onValueChange = { url.value = it },
             placeholder = { Text(stringResource(id = R.string.server_url_placeholder)) },
             label = { Text(stringResource(id = R.string.link_url)) }
         )
@@ -123,25 +151,30 @@ fun SubmitBookmarkPage(backend: Backend, preferences: PreferencesManager, onSubm
                 Text(text = stringResource(id = R.string.collection))
             }
             Row(modifier = Modifier.weight(1f)) {}
-            Button(onClick = {
-                val link = typeFactory.bookmark(
-                    url = linkUrl.value,
-                    name = name.value,
-                    description = description.value,
-                    tags = tags.value.split(","),
-                    collection = when (collectionIndex.intValue > -1) {
-                        true -> collections[collectionIndex.intValue]
-                        false -> null
-                    }
-                )
+            Button(
+                onClick = {
+                    val bookmark = typeFactory.bookmark(
+                        id = id.value,
+                        url = url.value,
+                        name = name.value,
+                        description = description.value,
+                        tags = tags.value.split(","),
+                        collection = when (collectionIndex.intValue > -1) {
+                            true -> collections[collectionIndex.intValue]
+                            false -> null
+                        }
+                    )
 
-                if (backend.createBookmark(link)) {
-                    ShowToast(context, context.getString(R.string.link_submit_success))
-                    onSubmit()
-                } else {
-                    ShowToast(context, context.getString(R.string.link_submit_failed));
+                    val res = if (update.value) backend.updateBookmark(bookmark) else backend.createBookmark(bookmark)
+
+                    if (res) {
+                        ShowToast(context, context.getString(R.string.link_submit_success))
+                        onSubmit()
+                    } else {
+                        ShowToast(context, context.getString(R.string.link_submit_failed));
+                    }
                 }
-            }) {
+            ) {
                 Text(text = stringResource(id = R.string.submit))
             }
         }
@@ -152,7 +185,7 @@ fun SubmitBookmarkPage(backend: Backend, preferences: PreferencesManager, onSubm
 @Composable
 fun SubmitLinkPreview() {
     LinkGuardianTheme(darkTheme = true) {
-        SubmitBookmarkPage(
+        BookmarkEditorPage(
             backend = LinkwardenBackend("", "", ""),
             preferences = PreferencesManager(LocalContext.current),
             onSubmit = {}

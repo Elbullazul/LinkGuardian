@@ -22,7 +22,7 @@ interface Backend {
     var hasCollections: Boolean
     var hasTags: Boolean
 
-    suspend fun getBookmarks(): List<Bookmark>
+    suspend fun getBookmarks(collectionId: String? = null, tagId: String? = null): List<Bookmark>
     fun getCollections(): List<Collection>
     fun getTags(): List<Tag>
     fun getBookmark(id: String): Bookmark
@@ -30,7 +30,10 @@ interface Backend {
     fun getTag(id: String): Tag
     fun getUser(id: String): User
 
-    fun createBookmark(link: Bookmark): Boolean
+    fun createBookmark(bookmark: Bookmark): Boolean
+    fun updateBookmark(bookmark: Bookmark): Boolean
+
+    fun reset()     // reset internal state
 
     fun isAuthorized(): Boolean
     fun isReachable(): Boolean {
@@ -100,6 +103,36 @@ interface Backend {
             val request = Request.Builder()
                 .url(url.build())
                 .post(payload.toRequestBody(MEDIA_TYPE_JSON))
+                .header("Authorization", "Bearer $token")
+                .build()
+
+            client.newCall(request).enqueue(future)
+
+            val result = future.get().isSuccessful
+            future.get().close()
+
+            return result
+        } catch (e: Exception) {
+            println(e.message)
+        }
+
+        return false
+    }
+
+    fun put(route: String, payload: String, args: Map<String, String> = mapOf()): Boolean {
+        try {
+            val future = ResponseFuture()
+            val url = HttpUrl.Builder()
+                .scheme(scheme)
+                .host(domain)
+                .addPathSegments(route)
+            args.forEach { arg ->
+                url.addQueryParameter(arg.key, arg.value)
+            }
+
+            val request = Request.Builder()
+                .url(url.build())
+                .put(payload.toRequestBody(MEDIA_TYPE_JSON))
                 .header("Authorization", "Bearer $token")
                 .build()
 

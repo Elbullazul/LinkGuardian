@@ -6,22 +6,23 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import dev.elbullazul.linkguardian.R
+import kotlinx.serialization.Serializable
 
 // routes
-const val NAV_ROUTE_DASHBOARD = "dashboard"
-const val NAV_ROUTE_LOGIN = "login"
-const val NAV_ROUTE_SETTINGS = "settings"
-const val NAV_ROUTE_SUBMIT_LINK = "add_link"
-const val NAV_ROUTE_COLLECTIONS = "collections"
+@Serializable data object LOGIN
+@Serializable data class BOOKMARKS(val collectionId: String? = null, val tagId: String? = null)
+@Serializable data class BOOKMARK_EDITOR(val bookmarkId: String? = null)
+@Serializable data object COLLECTIONS
+@Serializable data object SETTINGS
 
 class Destination(
     val label: Int,
     val icon: ImageVector,
-    val route: String
+    val route: Any
 )
 
 val destinations = listOf(
-    Destination(label = R.string.dashboard, icon = Icons.Outlined.Home, route = NAV_ROUTE_DASHBOARD),
-    Destination(label = R.string.collections, icon = Icons.AutoMirrored.Outlined.List, route = NAV_ROUTE_COLLECTIONS),
-    Destination(label = R.string.settings, icon = Icons.Outlined.Settings, route = NAV_ROUTE_SETTINGS)
+    Destination(label = R.string.dashboard, icon = Icons.Outlined.Home, route = BOOKMARKS()),
+    Destination(label = R.string.collections, icon = Icons.AutoMirrored.Outlined.List, route = COLLECTIONS),
+    Destination(label = R.string.settings, icon = Icons.Outlined.Settings, route = SETTINGS)
 )

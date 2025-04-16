@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -33,7 +34,13 @@ import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenTag
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
-fun BookmarkFragment(link: Bookmark, serverUrl: String, showPreviews: Boolean) {
+fun BookmarkFragment(
+    link: Bookmark,
+    serverUrl: String,
+    showPreviews: Boolean,
+    onEdit: () -> Unit,
+    onTagClick: (String) -> Unit
+) {
     val uriHandler = LocalUriHandler.current
 
     Card(
@@ -44,7 +51,8 @@ fun BookmarkFragment(link: Bookmark, serverUrl: String, showPreviews: Boolean) {
                 uriHandler.openUri(link.url)
             },
     ) {
-        Row(Modifier
+        Row(
+            Modifier
                 .fillMaxWidth()
                 .padding(10.dp, 5.dp)
         ) {
@@ -61,13 +69,17 @@ fun BookmarkFragment(link: Bookmark, serverUrl: String, showPreviews: Boolean) {
             }
             Column {
                 Row {
-                    Text(linkedText(link.name), Modifier.fillMaxWidth())
-                    Icon(Icons.Filled.MoreVert, "")
+                    Text(linkedText(link.name), Modifier.weight(1.0f))
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "",
+                        modifier = Modifier.clickable { onEdit() }
+                    )
                 }
                 if (link is Describable) {
                     Text(link.truncatedDescription())
                 }
-                TagFragment(link.tags)
+                TagListFragment(link.tags, onTagClick)
             }
         }
     }
@@ -115,7 +127,9 @@ fun LinkCardPreview() {
                 )
             ),
             serverUrl = "https://docs.linkwarden.app",
-            showPreviews = true
+            showPreviews = true,
+            onEdit = {},
+            onTagClick = {}
         )
     }
 }

@@ -4,6 +4,7 @@ import dev.elbullazul.linkguardian.data.extensions.Colorizable
 import dev.elbullazul.linkguardian.data.extensions.Creatable
 import dev.elbullazul.linkguardian.data.extensions.Describable
 import dev.elbullazul.linkguardian.data.extensions.Iconifiable
+import dev.elbullazul.linkguardian.data.extensions.ParentOfMany
 import dev.elbullazul.linkguardian.data.extensions.Updateable
 import dev.elbullazul.linkguardian.data.generic.Bookmark
 import dev.elbullazul.linkguardian.data.generic.Collection
@@ -28,18 +29,19 @@ class LinkwardenCollection(
     @SerialName("_count")
     private val linkCount: LinkwardenLinkCount = LinkwardenLinkCount(0),
 
+    // TODO: this isn't what is seems!
     @SerialName("members")
     override val links: List<Bookmark> = listOf(),
 
     @SerialName("parent")
     private val parent: LinkwardenCollection? = null
 
-) : Collection, Describable, Creatable, Updateable, Colorizable, Iconifiable {
+) : Collection, Describable, Creatable, Updateable, Colorizable, Iconifiable, ParentOfMany {
     override fun getId(): String {
         return id.toString()
     }
 
-    override fun bookmarkCount(): Int {
-        return linkCount.count
+    override fun getMemberCount(): Int {
+        return linkCount.value
     }
 }

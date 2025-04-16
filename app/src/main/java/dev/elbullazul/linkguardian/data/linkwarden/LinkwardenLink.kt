@@ -1,5 +1,6 @@
 package dev.elbullazul.linkguardian.data.linkwarden
 
+import dev.elbullazul.linkguardian.data.extensions.Collectionable
 import dev.elbullazul.linkguardian.data.extensions.Colorizable
 import dev.elbullazul.linkguardian.data.extensions.Creatable
 import dev.elbullazul.linkguardian.data.extensions.Describable
@@ -34,8 +35,22 @@ class LinkwardenLink(
     override val tags: List<LinkwardenTag> = listOf(),
     val collection: LinkwardenCollection? = null,
     val pinnedBy: List<LinkwardenUser> = listOf()
-) : Bookmark, Describable, Previewable, Creatable, Updateable, Colorizable, Iconifiable {
+) : Bookmark, Describable, Previewable, Creatable, Updateable, Colorizable, Iconifiable, Collectionable {
     override fun getId(): String {
         return id.toString()
+    }
+
+    override fun getCollectionId(): String {
+        return collectionId.toString()
+    }
+
+    override fun tagsToString(): String {
+        var tagsString = ""
+
+        tags.forEach { tag ->
+            tagsString += "${tag.name},"
+        }
+
+        return tagsString.dropLast(1)
     }
 }

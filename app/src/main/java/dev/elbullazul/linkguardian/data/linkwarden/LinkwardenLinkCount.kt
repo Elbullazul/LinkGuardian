@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 class LinkwardenLinkCount(
     @SerialName("links")
-    val count: Int = 0
+    val value: Int = 0
 )

@@ -4,54 +4,67 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.toRoute
 import dev.elbullazul.linkguardian.backends.Backend
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.pages.LoginPage
-import dev.elbullazul.linkguardian.ui.pages.BookmarksPage
-import dev.elbullazul.linkguardian.ui.pages.CollectionsPage
+import dev.elbullazul.linkguardian.ui.pages.BookmarkListPage
+import dev.elbullazul.linkguardian.ui.pages.CollectionListPage
 import dev.elbullazul.linkguardian.ui.pages.SettingsPage
-import dev.elbullazul.linkguardian.ui.pages.SubmitBookmarkPage
+import dev.elbullazul.linkguardian.ui.pages.BookmarkEditorPage
 
 @Composable
 fun AppNavController(
     navController: NavHostController,
     preferences: PreferencesManager,
     backend: Backend,
-    startDestination: String
+    startDestination: Any
 ) {
-    // TODO: block navigation to the current page?
-
     NavHost(navController = navController, startDestination = startDestination) {
-        composable(NAV_ROUTE_DASHBOARD) {
-            BookmarksPage(
-                backend = backend,
-                preferences = preferences
-            )
-        }
-        composable(NAV_ROUTE_LOGIN) {
-            // TODO: rework to support dynamically swapping backends (container class?)
+        composable<LOGIN> {
             LoginPage(
                 backend = backend,
                 preferences = preferences,
-                onLogin = { navController.navigate(NAV_ROUTE_DASHBOARD) }
+                onLogin = { navController.navigate(BOOKMARKS()) }
             )
         }
-        composable(NAV_ROUTE_SETTINGS) {
-            SettingsPage(
-                preferences = preferences,
-                onLogout = { navController.navigate(NAV_ROUTE_LOGIN) }
-            )
-        }
-        composable(NAV_ROUTE_SUBMIT_LINK) {
-            SubmitBookmarkPage(
+        composable<BOOKMARKS> { backStackEntry->
+            val route = backStackEntry.toRoute<BOOKMARKS>()
+
+            // re-fetch bookmark list
+            backend.reset()
+
+            BookmarkListPage(
+                collectionId = route.collectionId,
+                tagId = route.tagId,
                 backend = backend,
                 preferences = preferences,
-                onSubmit = { navController.navigate(NAV_ROUTE_DASHBOARD) },
+                onEdit = { bookmarkId ->
+                    navController.navigate(BOOKMARK_EDITOR(bookmarkId))
+                }
             )
         }
-        composable(NAV_ROUTE_COLLECTIONS) {
-            CollectionsPage(
-                backend = backend
+        composable<BOOKMARK_EDITOR> { backStackEntry ->
+            BookmarkEditorPage(
+                backend = backend,
+                preferences = preferences,
+                onSubmit = { navController.navigate(BOOKMARKS()) },
+                bookmarkId = backStackEntry.toRoute<BOOKMARK_EDITOR>().bookmarkId
+            )
+        }
+        composable<COLLECTIONS> {
+            CollectionListPage(
+                backend = backend,
+                onClick = { id ->
+                    navController.navigate(BOOKMARKS(collectionId = id))
+                }
+            )
+        }
+        composable<SETTINGS> {
+            SettingsPage(
+                preferences = preferences,
+                onLogout = { navController.navigate(LOGIN) }
             )
         }
     }

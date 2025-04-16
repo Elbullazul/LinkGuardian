@@ -5,5 +5,4 @@ interface Collection {
     val links: List<Bookmark>
 
     fun getId(): String
-    fun bookmarkCount(): Int
 }

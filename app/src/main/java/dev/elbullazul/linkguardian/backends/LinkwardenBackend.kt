@@ -43,8 +43,15 @@ class LinkwardenBackend(
     private val ROUTE_DASHBOARD = "api/v2/dashboard"
     private val ROUTE_AVATAR = "api/v1/avatar"
 
-    override suspend fun getBookmarks(): List<Bookmark> {
-        val data = get(ROUTE_LINKS, mapOf(Pair("cursor", "$linkCursor"), Pair("sort", "0")))
+    override suspend fun getBookmarks(collectionId: String?, tagId: String?): List<Bookmark> {
+        val args = mutableMapOf(Pair("cursor", "$linkCursor"), Pair("sort", "0"))
+
+        if (!collectionId.isNullOrBlank())
+            args["collectionId"] = collectionId
+        if (!tagId.isNullOrBlank())
+            args["tagId"] = tagId
+
+        val data = get(ROUTE_LINKS, args)
         val response = json.decodeFromString<LinkwardenLinksResponse>(data)
         val links = response.links
 
@@ -110,10 +117,16 @@ class LinkwardenBackend(
         val data = get(ROUTE_DASHBOARD)
     }
 
-    override fun createBookmark(link: Bookmark): Boolean {
-        val payload = json.encodeToString<LinkwardenLink>(link as LinkwardenLink)
+    override fun createBookmark(bookmark: Bookmark): Boolean {
+        val payload = json.encodeToString<LinkwardenLink>(bookmark as LinkwardenLink)
 
         return post(ROUTE_LINKS, payload)
+    }
+
+    override fun updateBookmark(bookmark: Bookmark): Boolean {
+        val payload = json.encodeToString<LinkwardenLink>(bookmark as LinkwardenLink)
+
+        return put("$ROUTE_LINKS/${bookmark.id}", payload)
     }
 
     override fun isAuthorized(): Boolean {
@@ -140,5 +153,10 @@ class LinkwardenBackend(
         }
 
         return false
+    }
+
+    override fun reset() {
+        hasBookmarks = true
+        linkCursor = 0
     }
 }

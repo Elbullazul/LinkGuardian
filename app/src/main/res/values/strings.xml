@@ -22,7 +22,7 @@
     <string name="connected_to_server">Connected to server</string>
     <string name="missing_feature">Not yet available</string>
     <string name="use_https">Use HTTPS</string>
-    <string name="link_submit_success">Link was added successfully</string>
+    <string name="link_submit_success">Link was submitted successfully</string>
     <string name="link_submit_failed">Submission failed (see logs for details)</string>
     <string name="tags_placeholder">Tags separated by commas</string>
     <string name="collection_select">Select a collection</string>
@@ -38,4 +38,5 @@
     <string name="show_previews">Show image previews in lists</string>
     <string name="none">None</string>
     <string name="only_if_supported">Only enabled if server supports it</string>
+    <string name="tag">Tag</string>
 </resources>

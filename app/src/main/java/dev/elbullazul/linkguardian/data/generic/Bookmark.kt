@@ -6,4 +6,5 @@ interface Bookmark {
     val tags: List<Tag>
 
     fun getId(): String
+    fun tagsToString(): String
 }

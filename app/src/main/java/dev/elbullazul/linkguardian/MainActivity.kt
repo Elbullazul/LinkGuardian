@@ -1,5 +1,6 @@
 package dev.elbullazul.linkguardian
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
@@ -30,15 +31,19 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import dev.elbullazul.linkguardian.data.DataFactory
 import dev.elbullazul.linkguardian.navigation.AppNavController
-import dev.elbullazul.linkguardian.navigation.NAV_ROUTE_COLLECTIONS
-import dev.elbullazul.linkguardian.navigation.NAV_ROUTE_DASHBOARD
-import dev.elbullazul.linkguardian.navigation.NAV_ROUTE_LOGIN
-import dev.elbullazul.linkguardian.navigation.NAV_ROUTE_SETTINGS
-import dev.elbullazul.linkguardian.navigation.NAV_ROUTE_SUBMIT_LINK
+import dev.elbullazul.linkguardian.navigation.BOOKMARKS
+import dev.elbullazul.linkguardian.navigation.BOOKMARK_EDITOR
+import dev.elbullazul.linkguardian.navigation.COLLECTIONS
+import dev.elbullazul.linkguardian.navigation.LOGIN
+import dev.elbullazul.linkguardian.navigation.SETTINGS
 import dev.elbullazul.linkguardian.navigation.destinations
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
@@ -53,6 +58,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@SuppressLint("RestrictedApi")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App() {
@@ -63,40 +69,41 @@ fun App() {
     val preferences = PreferencesManager(context)
     preferences.load()
 
-    val displayBottomBar = rememberSaveable { (mutableStateOf(false)) }
+    val displayBottomBar = rememberSaveable { (mutableStateOf(true)) }
     val displayBackButton = rememberSaveable { (mutableStateOf(false)) }
-    val displayFloatingButton = rememberSaveable { (mutableStateOf(false)) }
+    val displayFloatingButton = rememberSaveable { (mutableStateOf(true)) }
     val loggedIn = rememberSaveable { (mutableStateOf(preferences.validCredentials())) }
 
     val dataFactory = DataFactory(preferences.serverType)
     val backend = dataFactory.backend(preferences.scheme, preferences.domain, preferences.token)
 
-    when (navBackStackEntry?.destination?.route) {
-        NAV_ROUTE_LOGIN -> {
+    // TODO: replace this temporary hacky solution with something more standard
+    when (navBackStackEntry?.destination?.route.toString().split("?").first().split(".").last()) {
+        LOGIN::class.simpleName -> {
             displayBottomBar.value = false
             displayFloatingButton.value = false
             displayBackButton.value = false
         }
 
-        NAV_ROUTE_DASHBOARD -> {
+        BOOKMARKS::class.simpleName -> {
             displayBottomBar.value = true
             displayFloatingButton.value = true
             displayBackButton.value = false
         }
 
-        NAV_ROUTE_COLLECTIONS -> {
+        COLLECTIONS::class.simpleName -> {
             displayBottomBar.value = true
             displayFloatingButton.value = false
             displayBackButton.value = false
         }
 
-        NAV_ROUTE_SETTINGS -> {
+        SETTINGS::class.simpleName -> {
             displayBottomBar.value = true
             displayFloatingButton.value = false
             displayBackButton.value = false
         }
 
-        NAV_ROUTE_SUBMIT_LINK -> {
+        BOOKMARK_EDITOR::class.simpleName -> {
             displayBottomBar.value = true
             displayFloatingButton.value = false
             displayBackButton.value = true
@@ -123,12 +130,20 @@ fun App() {
             bottomBar = {
                 if (displayBottomBar.value) {
                     BottomAppBar {
-                        for (dest in destinations) {
+                        destinations.forEach { dest ->
                             NavigationBarItem(
-                                selected = (navController.currentDestination?.route == dest.route),
-                                onClick = { navController.navigate(dest.route) },
-                                icon = { Icon(imageVector = dest.icon, contentDescription = "") },
-                                label = { Text(text = stringResource(id = dest.label)) }
+                                selected = routeMatches(navBackStackEntry?.destination, dest.route),
+                                icon = { Icon(imageVector = dest.icon, contentDescription = stringResource(dest.label)) },
+                                label = { Text(text = stringResource(dest.label)) },
+                                onClick = {
+                                    navController.navigate(dest.route) {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                }
                             )
                         }
                     }
@@ -137,7 +152,7 @@ fun App() {
             floatingActionButton = {
                 if (displayFloatingButton.value) {
                     FloatingActionButton(
-                        onClick = { navController.navigate(NAV_ROUTE_SUBMIT_LINK) },
+                        onClick = { navController.navigate(BOOKMARK_EDITOR()) },
                     ) {
                         Icon(Icons.Filled.Add, "")
                     }
@@ -151,16 +166,21 @@ fun App() {
                     preferences = preferences,
                     backend = backend,
                     startDestination = if (!loggedIn.value) {
-                        NAV_ROUTE_LOGIN
+                        LOGIN
                     } else if (context.findActivity()?.intent?.action == Intent.ACTION_SEND) {
-                        NAV_ROUTE_SUBMIT_LINK
+                        BOOKMARK_EDITOR()
                     } else {
-                        NAV_ROUTE_DASHBOARD
+                        BOOKMARKS()
                     }
                 )
             }
         }
     }
+}
+
+fun routeMatches(destination: NavDestination?, route: Any): Boolean {
+    // TODO: surely there is a less hacky way to do this!
+    return destination?.route.toString().split("?").first().split(".").last() == route::class.simpleName
 }
 
 fun Context.findActivity(): Activity? = when (this) {

@@ -18,9 +18,9 @@ class DataFactory(
         return LinkwardenBackend(scheme, domain, secret);
     }
 
-    fun bookmark(url: String, name: String, description: String = "", tags: List<String>, collection: Collection?): Bookmark {
+    fun bookmark(id: String, url: String, name: String, description: String = "", tags: List<String>, collection: Collection?): Bookmark {
         return LinkwardenLink(
-            id = -1,
+            id = id.toInt(),
             name = name,
             url = url,
             description = description,
