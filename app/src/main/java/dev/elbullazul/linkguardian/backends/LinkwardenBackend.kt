@@ -132,7 +132,6 @@ class LinkwardenBackend(
 
             client.newCall(request).enqueue(future)
             val result = future.get().isSuccessful
-            future.get().close()
 
             return result
         }
