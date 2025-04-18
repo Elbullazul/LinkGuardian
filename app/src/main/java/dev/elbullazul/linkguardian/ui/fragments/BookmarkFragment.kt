@@ -1,6 +1,7 @@
 package dev.elbullazul.linkguardian.ui.fragments
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -73,13 +74,17 @@ fun BookmarkFragment(
                 Text(linkedText(link.name))
 
                 if (link is Describable) {
-                    Text(link.truncatedDescription())
+                    Text(
+                        text = link.truncatedDescription(),
+                        modifier = Modifier.padding(vertical = 2.dp)
+                    )
                 }
 
                 Row {
                     LazyHorizontalGrid(
                         rows = GridCells.Adaptive(minSize = 25.dp),
-                        modifier = Modifier.height(25.dp).weight(1.0f)
+                        modifier = Modifier.height(25.dp).weight(1.0f),
+                        verticalArrangement = Arrangement.Center
                     ) {
                         items(link.tags) { tag ->
                             TagFragment(tag, onTagClick)
@@ -103,7 +108,7 @@ fun linkedText(text: String): AnnotatedString {
         append(text)
         addStyle(
             style = SpanStyle(
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                color = MaterialTheme.colorScheme.primary,
                 textDecoration = TextDecoration.Underline
             ),
             start = 0,
