@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import dev.elbullazul.linkguardian.R
 import dev.elbullazul.linkguardian.ShowToast
 import dev.elbullazul.linkguardian.backends.Backend
+import dev.elbullazul.linkguardian.backends.BackendTypes
 import dev.elbullazul.linkguardian.backends.LinkwardenBackend
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.storage.SCHEME_HTTP
@@ -97,9 +98,10 @@ fun LoginPage(backend: Backend, preferences: PreferencesManager, onLogin: () -> 
                     preferences.domain = backend.domain
                     preferences.token = backend.token
 
-                    // TODO: save backend type when multiple backends are supported
-                    preferences.persist()
+                    // TODO: save appropriate backend type when multiple backends are supported
+                    preferences.serverType = BackendTypes.Linkwarden
 
+                    preferences.persist()
                     onLogin()
                 }
             }

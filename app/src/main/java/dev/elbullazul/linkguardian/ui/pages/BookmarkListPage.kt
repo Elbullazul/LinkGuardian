@@ -1,5 +1,6 @@
 package dev.elbullazul.linkguardian.ui.pages
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,43 +12,96 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dev.elbullazul.linkguardian.R
 import dev.elbullazul.linkguardian.backends.Backend
 import dev.elbullazul.linkguardian.backends.LinkwardenBackend
 import dev.elbullazul.linkguardian.data.generic.Bookmark
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.fragments.BookmarkFragment
+import dev.elbullazul.linkguardian.ui.fragments.BottomSheetAction
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookmarkListPage(collectionId: String? = null, tagId: String? = null, backend: Backend, preferences: PreferencesManager, onEdit: (String) -> Unit) {
+fun BookmarkListPage(
+    collectionId: String? = null,
+    tagId: String? = null,
+    backend: Backend,
+    preferences: PreferencesManager,
+    onEdit: (String) -> Unit
+) {
+    val context = LocalContext.current
+    val listState = rememberLazyListState()
     val loading = remember { mutableStateOf(true) }
     val itemList = remember { mutableStateListOf<Bookmark>() }
-    val listState = rememberLazyListState()
+    val selectedBookmarks = remember { mutableStateListOf<Bookmark>() }   // bit of a hack
+
+    val scope = rememberCoroutineScope()
+    val sheetState = rememberModalBottomSheetState()
+    var showBottomSheet by remember { mutableStateOf(false) }
+
+    fun hideBottomSheet() {
+        scope.launch {
+            sheetState.hide()
+        }.invokeOnCompletion {
+            if (!sheetState.isVisible) {
+                showBottomSheet = false
+            }
+        }
+    }
+
+    fun reload() {
+        // TODO: maybe a model-based approach would work better
+        scope.launch {
+            loading.value = true
+
+            itemList.clear()
+            backend.reset()
+
+            while (backend.hasBookmarks) {
+                itemList.addAll(backend.run { getBookmarks(collectionId, tagId) })
+            }
+
+            loading.value = false
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        // TODO: this should be moved elsewhere, to new dedicated pages for collection and tag viewing, for example
+        // TODO: maybe this should be moved elsewhere? Ex. new dedicated pages for collection and tag viewing
         if (!collectionId.isNullOrBlank() || !tagId.isNullOrBlank()) {
             Row(
                 modifier = Modifier.padding(5.dp)
             ) {
                 if (!collectionId.isNullOrBlank())
-                    Text(text = "${stringResource(R.string.collection)} ${collectionId}" )
+                    Text(text = "${stringResource(R.string.collection)} ${collectionId}")
                 if (!tagId.isNullOrBlank())
-                    Text(text = "${stringResource(R.string.tag)} ${tagId}" )
+                    Text(text = "${stringResource(R.string.tag)} ${tagId}")
             }
         }
         LazyColumn(
@@ -76,26 +130,75 @@ fun BookmarkListPage(collectionId: String? = null, tagId: String? = null, backen
                     link = link,
                     serverUrl = "${backend.scheme}://${backend.domain}",
                     showPreviews = preferences.showPreviews,
-                    onEdit = { onEdit(link.getId()) },
+                    onOptionClick = {
+                        selectedBookmarks.clear()
+                        selectedBookmarks.add(link)
 
-                    // TODO: should open the tag page
-                    onTagClick = { id->
+                        showBottomSheet = true
+                    },
 
+                    // TODO: should open 'filtered by tag' page
+                    onTagClick = { id ->
                         println("=============================$id")
                     }
                 )
             }
         }
 
-        LaunchedEffect(key1 = 0) {
-            loading.value = true
+        LaunchedEffect(key1 = this) {
+            reload()
+        }
+    }
 
-            // TODO: maybe a model-based approach would work better
-            while (backend.hasBookmarks) {
-                itemList.addAll(backend.run { getBookmarks(collectionId, tagId) })
+    if (showBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showBottomSheet = false }, sheetState = sheetState
+        ) {
+            // this works because selectedBookmarks is always populated before calling the modal sheet
+            val selectedBookmark = selectedBookmarks.first()
+
+            Column(modifier = Modifier.padding(horizontal = 5.dp, vertical = 5.dp)) {
+                Text(
+                    text = selectedBookmark.name,
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(bottom = 20.dp, start = 15.dp, end = 15.dp)
+                )
+                BottomSheetAction(
+                    imageVector = Icons.Default.Edit,
+                    iconTint = MaterialTheme.colorScheme.onSurface,
+                    text = stringResource(R.string.edit),
+                    onClick = {
+                        hideBottomSheet()
+
+                        onEdit(selectedBookmark.getId())
+                    })
+                BottomSheetAction(
+                    imageVector = Icons.Default.Share,
+                    iconTint = MaterialTheme.colorScheme.primary,
+                    text = stringResource(R.string.share),
+                    onClick = {
+                        hideBottomSheet()
+
+                        val sendIntent: Intent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            putExtra(Intent.EXTRA_TEXT, selectedBookmark.url)
+                            type = "text/plain"
+                        }
+
+                        val shareIntent = Intent.createChooser(sendIntent, null)
+                        context.startActivity(shareIntent)
+                    })
+                BottomSheetAction(
+                    imageVector = Icons.Default.Delete,
+                    iconTint = MaterialTheme.colorScheme.error,
+                    text = stringResource(R.string.delete),
+                    onClick = {
+                        hideBottomSheet()
+
+                        backend.deleteBookmark(selectedBookmark)
+                        reload()
+                    })
             }
-
-            loading.value = false
         }
     }
 }
@@ -105,7 +208,7 @@ fun BookmarkListPage(collectionId: String? = null, tagId: String? = null, backen
 fun LinkListPreview() {
     LinkGuardianTheme {
         BookmarkListPage(
-            backend = LinkwardenBackend("","",""),
+            backend = LinkwardenBackend("", "", ""),
             preferences = PreferencesManager(LocalContext.current),
             onEdit = {}
         )

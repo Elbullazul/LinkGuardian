@@ -28,7 +28,7 @@ class LinkwardenLink(
     val pdf: String? = null,
     val readable: String? = null,
     val monolith: String? = null,
-    val lastPreserved: String? = null,          // TODO: date tome
+    val lastPreserved: String? = null,          // TODO: date time
     val importDate: String? = null,             // TODO: date time
     override val createdAt: String = "",
     override val updatedAt: String = "",

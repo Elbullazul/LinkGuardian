@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -38,7 +40,7 @@ fun BookmarkFragment(
     link: Bookmark,
     serverUrl: String,
     showPreviews: Boolean,
-    onEdit: () -> Unit,
+    onOptionClick: () -> Unit,
     onTagClick: (String) -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
@@ -68,18 +70,28 @@ fun BookmarkFragment(
                 )
             }
             Column {
-                Row {
-                    Text(linkedText(link.name), Modifier.weight(1.0f))
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "",
-                        modifier = Modifier.clickable { onEdit() }
-                    )
-                }
+                Text(linkedText(link.name))
+
                 if (link is Describable) {
                     Text(link.truncatedDescription())
                 }
-                TagListFragment(link.tags, onTagClick)
+
+                Row {
+                    LazyHorizontalGrid(
+                        rows = GridCells.Adaptive(minSize = 25.dp),
+                        modifier = Modifier.height(25.dp).weight(1.0f)
+                    ) {
+                        items(link.tags) { tag ->
+                            TagFragment(tag, onTagClick)
+                        }
+                    }
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        tint = MaterialTheme.colorScheme.secondary,
+                        contentDescription = "",
+                        modifier = Modifier.clickable { onOptionClick() }
+                    )
+                }
             }
         }
     }
@@ -128,7 +140,7 @@ fun LinkCardPreview() {
             ),
             serverUrl = "https://docs.linkwarden.app",
             showPreviews = true,
-            onEdit = {},
+            onOptionClick = {},
             onTagClick = {}
         )
     }

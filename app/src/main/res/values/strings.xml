@@ -39,4 +39,7 @@
     <string name="none">None</string>
     <string name="only_if_supported">Only enabled if server supports it</string>
     <string name="tag">Tag</string>
+    <string name="delete">Delete</string>
+    <string name="share">Share</string>
+    <string name="edit">Edit</string>
 </resources>

@@ -10,6 +10,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 
 interface Backend {
     var scheme: String
@@ -32,25 +33,37 @@ interface Backend {
 
     fun createBookmark(bookmark: Bookmark): Boolean
     fun updateBookmark(bookmark: Bookmark): Boolean
+    fun deleteBookmark(bookmark: Bookmark): Boolean
 
     fun reset()     // reset internal state
+
+    private fun buildUrl(route: String = "", args: Map<String, String> = mapOf()): HttpUrl {
+        val url = HttpUrl.Builder()
+            .scheme(scheme)
+            .host(domain)
+            .addPathSegments(route)
+        args.forEach { arg ->
+            url.addQueryParameter(arg.key, arg.value)
+        }
+
+        return url.build()
+    }
+
+    private fun enqueue(request: Request): Response {
+        val future = ResponseFuture()
+        client.newCall(request).enqueue(future)
+
+        return future.get()
+    }
 
     fun isAuthorized(): Boolean
     fun isReachable(): Boolean {
         try {
-            val future = ResponseFuture()
-            val url = HttpUrl.Builder()
-                .scheme(scheme)
-                .host(domain)
-                .build()
             val request = Request.Builder()
-                .url(url)
+                .url(buildUrl())
                 .build()
 
-            client.newCall(request).enqueue(future)
-
-            val result = future.get()
-            future.get().close()
+            val result = enqueue(request)
 
             return result.isSuccessful
         } catch (e: Exception) {
@@ -62,24 +75,12 @@ interface Backend {
 
     fun get(route: String, args: Map<String, String> = mapOf()): String {
         try {
-            val future = ResponseFuture()
-            val url = HttpUrl.Builder()
-                .scheme(scheme)
-                .host(domain)
-                .addPathSegments(route)
-            args.forEach { arg ->
-                url.addQueryParameter(arg.key, arg.value)
-            }
-
             val request = Request.Builder()
-                .url(url.build())
+                .url(buildUrl(route, args))
                 .header("Authorization", "Bearer $token")
                 .build()
 
-            client.newCall(request).enqueue(future)
-
-            val body = future.get().body!!.string()
-            future.get().close()
+            val body = enqueue(request).body!!.string()
 
             return body
         } catch (e: Exception) {
@@ -91,27 +92,15 @@ interface Backend {
 
     fun post(route: String, payload: String, args: Map<String, String> = mapOf()): Boolean {
         try {
-            val future = ResponseFuture()
-            val url = HttpUrl.Builder()
-                .scheme(scheme)
-                .host(domain)
-                .addPathSegments(route)
-            args.forEach { arg ->
-                url.addQueryParameter(arg.key, arg.value)
-            }
-
             val request = Request.Builder()
-                .url(url.build())
+                .url(buildUrl(route, args))
                 .post(payload.toRequestBody(MEDIA_TYPE_JSON))
                 .header("Authorization", "Bearer $token")
                 .build()
 
-            client.newCall(request).enqueue(future)
+            val result = enqueue(request)
 
-            val result = future.get().isSuccessful
-            future.get().close()
-
-            return result
+            return result.isSuccessful
         } catch (e: Exception) {
             println(e.message)
         }
@@ -121,27 +110,38 @@ interface Backend {
 
     fun put(route: String, payload: String, args: Map<String, String> = mapOf()): Boolean {
         try {
-            val future = ResponseFuture()
-            val url = HttpUrl.Builder()
-                .scheme(scheme)
-                .host(domain)
-                .addPathSegments(route)
-            args.forEach { arg ->
-                url.addQueryParameter(arg.key, arg.value)
-            }
-
             val request = Request.Builder()
-                .url(url.build())
+                .url(buildUrl(route, args))
                 .put(payload.toRequestBody(MEDIA_TYPE_JSON))
                 .header("Authorization", "Bearer $token")
                 .build()
 
-            client.newCall(request).enqueue(future)
+            val result = enqueue(request)
 
-            val result = future.get().isSuccessful
-            future.get().close()
+            return result.isSuccessful
+        } catch (e: Exception) {
+            println(e.message)
+        }
 
-            return result
+        return false
+    }
+
+    fun delete(route: String, args: Map<String, String> = mapOf()): Boolean {
+        try {
+            val request = Request.Builder()
+                .url(buildUrl(route, args))
+                .delete()
+                .header("Authorization", "Bearer $token")
+                .build()
+
+            val result = enqueue(request)
+
+            println(route)
+            println(result.isSuccessful)
+            println(result.code)
+            println(result.message)
+
+            return result.isSuccessful
         } catch (e: Exception) {
             println(e.message)
         }

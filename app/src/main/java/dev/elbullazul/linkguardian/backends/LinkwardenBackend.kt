@@ -129,6 +129,10 @@ class LinkwardenBackend(
         return put("$ROUTE_LINKS/${bookmark.id}", payload)
     }
 
+    override fun deleteBookmark(bookmark: Bookmark): Boolean {
+        return delete("$ROUTE_LINKS/${bookmark.getId()}")
+    }
+
     override fun isAuthorized(): Boolean {
         try {
             val future =
