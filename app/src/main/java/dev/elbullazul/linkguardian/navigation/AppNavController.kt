@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.toRoute
 import dev.elbullazul.linkguardian.backends.Backend
 import dev.elbullazul.linkguardian.storage.PreferencesManager
@@ -42,6 +41,9 @@ fun AppNavController(
                 preferences = preferences,
                 onEdit = { bookmarkId ->
                     navController.navigate(BOOKMARK_EDITOR(bookmarkId))
+                },
+                onTagClick = { tagId ->
+                    navController.navigate(BOOKMARKS(tagId = tagId))
                 }
             )
         }

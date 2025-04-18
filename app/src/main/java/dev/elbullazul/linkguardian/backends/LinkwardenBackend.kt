@@ -5,6 +5,7 @@ import dev.elbullazul.linkguardian.data.generic.Collection
 import dev.elbullazul.linkguardian.data.generic.Tag
 import dev.elbullazul.linkguardian.data.generic.User
 import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenLink
+import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenTag
 import dev.elbullazul.linkguardian.data.linkwarden.responses.LinkwardenCollectionResponse
 import dev.elbullazul.linkguardian.data.linkwarden.responses.LinkwardenCollectionsResponse
 import dev.elbullazul.linkguardian.data.linkwarden.responses.LinkwardenLinkResponse
@@ -92,9 +93,17 @@ class LinkwardenBackend(
     }
 
     override fun getTag(id: String): Tag {
-        val data = get("$ROUTE_TAGS/$id")
+        val data = get(ROUTE_TAGS)
+        val response = json.decodeFromString<LinkwardenTagsResponse>(data)
 
-        TODO("No API route for specific tag exists")
+        var tag = response.tags.find { tag ->
+            tag.getId() == id
+        }
+
+        if (tag == null)
+            tag = LinkwardenTag(-1, "")
+
+        return tag
     }
 
     override fun getUser(id: String): User {

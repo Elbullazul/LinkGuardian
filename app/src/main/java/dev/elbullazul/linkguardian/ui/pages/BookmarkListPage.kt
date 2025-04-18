@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -54,13 +55,16 @@ fun BookmarkListPage(
     tagId: String? = null,
     backend: Backend,
     preferences: PreferencesManager,
-    onEdit: (String) -> Unit
+    onEdit: (String) -> Unit,
+    onTagClick: (String) -> Unit
 ) {
     val context = LocalContext.current
     val listState = rememberLazyListState()
     val loading = remember { mutableStateOf(true) }
     val itemList = remember { mutableStateListOf<Bookmark>() }
     val selectedBookmarks = remember { mutableStateListOf<Bookmark>() }   // bit of a hack
+    val applyFilters =
+        remember { mutableStateOf(!collectionId.isNullOrBlank() || !tagId.isNullOrBlank()) }
 
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
@@ -77,7 +81,6 @@ fun BookmarkListPage(
     }
 
     fun reload() {
-        // TODO: maybe a model-based approach would work better
         scope.launch {
             loading.value = true
 
@@ -85,25 +88,48 @@ fun BookmarkListPage(
             backend.reset()
 
             while (backend.hasBookmarks) {
-                itemList.addAll(backend.run { getBookmarks(collectionId, tagId) })
+                itemList.addAll(backend.run {
+                    if (applyFilters.value)
+                        getBookmarks(collectionId, tagId)
+                    else
+                        getBookmarks()
+                })
             }
 
             loading.value = false
         }
     }
 
+    // TODO: maybe a model-based approach would work better
     Column(modifier = Modifier.fillMaxSize()) {
-        // TODO: maybe this should be moved elsewhere? Ex. new dedicated pages for collection and tag viewing
-        if (!collectionId.isNullOrBlank() || !tagId.isNullOrBlank()) {
+        if (applyFilters.value) {
+            val text = if (!collectionId.isNullOrBlank())
+                stringResource(
+                    R.string.links_for_collection,
+                    backend.getCollection(collectionId).name
+                )
+            else
+                stringResource(R.string.links_for_tag, backend.getTag(tagId!!).name)
+
             Row(
-                modifier = Modifier.padding(5.dp)
+                modifier = Modifier.padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                if (!collectionId.isNullOrBlank())
-                    Text(text = "${stringResource(R.string.collection)} ${collectionId}")
-                if (!tagId.isNullOrBlank())
-                    Text(text = "${stringResource(R.string.tag)} ${tagId}")
+                Text(
+                    text = text,
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.weight(1.0f)
+                )
+                Button(onClick = {
+                    applyFilters.value = false
+                    reload()
+                }) {
+                    Text(text = stringResource(R.string.clear_filters))
+                }
             }
         }
+
         LazyColumn(
             state = listState,
             modifier = Modifier.fillMaxSize(),
@@ -136,11 +162,7 @@ fun BookmarkListPage(
 
                         showBottomSheet = true
                     },
-
-                    // TODO: should open 'filtered by tag' page
-                    onTagClick = { id ->
-                        println("=============================$id")
-                    }
+                    onTagClick = onTagClick
                 )
             }
         }
@@ -210,7 +232,8 @@ fun LinkListPreview() {
         BookmarkListPage(
             backend = LinkwardenBackend("", "", ""),
             preferences = PreferencesManager(LocalContext.current),
-            onEdit = {}
+            onEdit = {},
+            onTagClick = {}
         )
     }
 }

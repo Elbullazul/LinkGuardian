@@ -32,11 +32,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 import dev.elbullazul.linkguardian.data.DataFactory
 import dev.elbullazul.linkguardian.navigation.AppNavController
 import dev.elbullazul.linkguardian.navigation.BOOKMARKS
@@ -180,6 +178,7 @@ fun App() {
 
 fun routeMatches(destination: NavDestination?, route: Any): Boolean {
     // TODO: surely there is a less hacky way to do this!
+    // TODO: don't highlight if route has arguments?
     return destination?.route.toString().split("?").first().split(".").last() == route::class.simpleName
 }
 

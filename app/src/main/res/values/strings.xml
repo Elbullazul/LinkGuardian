@@ -42,4 +42,7 @@
     <string name="delete">Delete</string>
     <string name="share">Share</string>
     <string name="edit">Edit</string>
+    <string name="links_for_collection">Links for collection \'%1$s\'</string>
+    <string name="links_for_tag">Links for tag \'%1$s\'</string>
+    <string name="clear_filters">Clear filters</string>
 </resources>
