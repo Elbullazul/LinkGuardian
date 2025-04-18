@@ -6,14 +6,14 @@ enum class BackendTypes {
 //    Karakeep (aka Hoarder)
 }
 
-fun type2Int(type: BackendTypes): Int {
+fun enumToInt(type: BackendTypes): Int {
     if (type == BackendTypes.Linkwarden)
         return 1
 
     return 0
 }
 
-fun Int2type(int: Int): BackendTypes {
+fun intToEnum(int: Int): BackendTypes {
     if (int == 1)
         return BackendTypes.Linkwarden
 

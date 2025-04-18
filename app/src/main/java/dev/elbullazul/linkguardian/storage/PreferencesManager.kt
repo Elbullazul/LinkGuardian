@@ -2,8 +2,8 @@ package dev.elbullazul.linkguardian.storage
 
 import android.content.Context
 import dev.elbullazul.linkguardian.backends.BackendTypes
-import dev.elbullazul.linkguardian.backends.Int2type
-import dev.elbullazul.linkguardian.backends.type2Int
+import dev.elbullazul.linkguardian.backends.intToEnum
+import dev.elbullazul.linkguardian.backends.enumToInt
 
 const val PREFERENCES_KEY_FILE = "com.elbullazul.linkguardian.PREFERENCES_KEY_FILE"
 const val PREF_DOMAIN = "DOMAIN"
@@ -36,7 +36,7 @@ class PreferencesManager(
         userId = preferences.getInt(PREF_USERID, -1)
         showPreviews = preferences.getBoolean(PREF_SHOW_PREVIEWS, false)
         oledTheme = preferences.getBoolean(PREF_OLED_THEME, false)
-        serverType = Int2type(preferences.getInt(PREF_SERVER_TYPE, 0))
+        serverType = intToEnum(preferences.getInt(PREF_SERVER_TYPE, 0))
     }
 
     fun validCredentials(): Boolean {
@@ -53,7 +53,7 @@ class PreferencesManager(
             putInt(PREF_USERID, userId)
             putBoolean(PREF_SHOW_PREVIEWS, showPreviews)
             putBoolean(PREF_OLED_THEME, oledTheme)
-            putInt(PREF_SERVER_TYPE, type2Int(serverType))
+            putInt(PREF_SERVER_TYPE, enumToInt(serverType))
 
             apply()
         }
