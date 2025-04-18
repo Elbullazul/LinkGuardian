@@ -183,6 +183,11 @@ fun BookmarkListPage(
                 Text(
                     text = selectedBookmark.name,
                     fontSize = 16.sp,
+                    modifier = Modifier.padding(start = 15.dp, end = 15.dp)
+                )
+                Text(
+                    text = selectedBookmark.url,
+                    color = MaterialTheme.colorScheme.secondary,
                     modifier = Modifier.padding(bottom = 20.dp, start = 15.dp, end = 15.dp)
                 )
                 BottomSheetAction(
@@ -216,6 +221,8 @@ fun BookmarkListPage(
                     text = stringResource(R.string.delete),
                     onClick = {
                         hideBottomSheet()
+
+                        // TODO: ask for confirmation?
 
                         backend.deleteBookmark(selectedBookmark)
                         reload()
