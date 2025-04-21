@@ -29,13 +29,11 @@ class LinkwardenCollection(
     @SerialName("_count")
     private val linkCount: LinkwardenLinkCount = LinkwardenLinkCount(0),
 
-    // TODO: this isn't what is seems!
     @SerialName("members")
-    override val links: List<Bookmark> = listOf(),
+    private val members: List<LinkwardenMember> = listOf(),
 
     @SerialName("parent")
     private val parent: LinkwardenCollection? = null
-
 ) : Collection, Describable, Creatable, Updateable, Colorizable, Iconifiable, ParentOfMany {
     override fun getId(): String {
         return id.toString()

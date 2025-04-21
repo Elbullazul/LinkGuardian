@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class LinkwardenUser(
-    override val id: Int,
+    val id: Int,
     override val username: String = "",
     val email: String? = "",
     val name: String? = "",
@@ -16,5 +16,9 @@ class LinkwardenUser(
     val archiveAsPDF: Boolean? = false,
     val emailVerified: String? = "",
     val subscriptions: String? = "",
-    override val createdAt: String = ""             // TODO: use date time
-): User, Creatable
+    override val createdAt: String = ""
+) : User, Creatable {
+    override fun getId(): String {
+        return id.toString()
+    }
+}
