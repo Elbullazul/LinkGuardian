@@ -134,13 +134,14 @@ fun App() {
                                 icon = { Icon(imageVector = dest.icon, contentDescription = stringResource(dest.label)) },
                                 label = { Text(text = stringResource(dest.label)) },
                                 onClick = {
-                                    navController.navigate(dest.route) {
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
+                                    navController.navigate(dest.route)
+//                                    navController.navigate(dest.route) {
+//                                        popUpTo(navController.graph.findStartDestination().id) {
+//                                            saveState = true
+//                                        }
+//                                        launchSingleTop = true
+//                                        restoreState = true
+//                                    }
                                 }
                             )
                         }
