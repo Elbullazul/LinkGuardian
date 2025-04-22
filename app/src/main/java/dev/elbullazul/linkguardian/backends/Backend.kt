@@ -137,11 +137,6 @@ interface Backend {
 
             val result = enqueue(request)
 
-            println(route)
-            println(result.isSuccessful)
-            println(result.code)
-            println(result.message)
-
             return result.isSuccessful
         } catch (e: Exception) {
             println(e.message)

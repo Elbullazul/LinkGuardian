@@ -16,13 +16,6 @@ private val DarkColorScheme = darkColorScheme(
     tertiary = Pink80,
 )
 
-private val OledColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80,
-    background = Black40
-)
-
 private val LightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
@@ -53,12 +46,12 @@ fun LinkGuardianTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> if (oledTheme) {
-            println("======================= darkness falls")
-            OledColorScheme
-        } else DarkColorScheme
+        darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+
+    // TODO: see how other apps do this
+    // if (darkTheme && oledTheme) colorScheme.background = Black40
 
     MaterialTheme(
         colorScheme = colorScheme,

@@ -45,7 +45,7 @@ fun SettingsPage(backend: Backend, preferences: PreferencesManager, onLogout: ()
                 )
             }
             Switch(
-//                enabled = false,
+                enabled = false,
                 checked = enableOledTheme,
                 onCheckedChange = {
                     enableOledTheme = it
@@ -63,7 +63,7 @@ fun SettingsPage(backend: Backend, preferences: PreferencesManager, onLogout: ()
                 )
             }
             Switch(
-//                enabled = false,
+                enabled = false,
 //                enabled = backend is PreviewProvider,
                 checked = enableBookmarkPreviews,
                 onCheckedChange = {
