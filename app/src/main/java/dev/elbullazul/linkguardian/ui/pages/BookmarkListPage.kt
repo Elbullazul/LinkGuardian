@@ -135,8 +135,8 @@ fun BookmarkListPage(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             // TODO: the loading indicator does not spin properly
-            item {
-                if (loading.value) {
+            if (loading.value) {
+                item {
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
@@ -163,6 +163,9 @@ fun BookmarkListPage(
                     },
                     onTagClick = onTagClick
                 )
+            }
+            item {
+                Box(modifier = Modifier.padding(bottom = 75.dp))
             }
         }
 

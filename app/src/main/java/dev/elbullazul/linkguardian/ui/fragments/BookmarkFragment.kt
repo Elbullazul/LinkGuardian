@@ -49,7 +49,7 @@ fun BookmarkFragment(
     Card(
         Modifier
             .fillMaxWidth()
-            .padding(5.dp, 2.dp)
+            .padding(7.dp, 2.dp)
             .clickable {
                 uriHandler.openUri(link.url)
             },
