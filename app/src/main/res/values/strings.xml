@@ -44,6 +44,6 @@
     <string name="edit">Edit</string>
     <string name="links_for_collection">Links for collection \'%1$s\'</string>
     <string name="links_for_tag">Links for tag \'%1$s\'</string>
-    <string name="clear_filters">Clear filters</string>
+    <string name="clear_filters">Clear filter</string>
     <string name="restart_required">Requires app restart</string>
 </resources>
