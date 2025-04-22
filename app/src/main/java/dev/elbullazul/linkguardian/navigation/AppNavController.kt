@@ -1,11 +1,13 @@
 package dev.elbullazul.linkguardian.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import dev.elbullazul.linkguardian.backends.Backend
+import dev.elbullazul.linkguardian.findActivity
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.pages.LoginPage
 import dev.elbullazul.linkguardian.ui.pages.BookmarkListPage
@@ -20,6 +22,8 @@ fun AppNavController(
     backend: Backend,
     startDestination: Any
 ) {
+    val context = LocalContext.current
+
     NavHost(navController = navController, startDestination = startDestination) {
         composable<LOGIN> {
             LoginPage(
@@ -48,11 +52,20 @@ fun AppNavController(
             )
         }
         composable<BOOKMARK_EDITOR> { backStackEntry ->
+            val route = backStackEntry.toRoute<BOOKMARK_EDITOR>()
+
             BookmarkEditorPage(
                 backend = backend,
                 preferences = preferences,
-                onSubmit = { navController.navigate(BOOKMARKS()) },
-                bookmarkId = backStackEntry.toRoute<BOOKMARK_EDITOR>().bookmarkId
+                onSubmit = {
+                    // exit app if bookmarkUrl is not empty (when sharing from external apps)
+                    if (!route.bookmarkUrl.isNullOrBlank())
+                        context.findActivity()?.finish()
+                    else
+                        navController.navigate(BOOKMARKS())
+                },
+                bookmarkId = route.bookmarkId,
+                bookmarkUrl = route.bookmarkUrl
             )
         }
         composable<COLLECTIONS> {

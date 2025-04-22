@@ -1,6 +1,5 @@
 package dev.elbullazul.linkguardian.ui.pages
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,13 +27,12 @@ import dev.elbullazul.linkguardian.backends.LinkwardenBackend
 import dev.elbullazul.linkguardian.data.DataFactory
 import dev.elbullazul.linkguardian.data.extensions.Collectionable
 import dev.elbullazul.linkguardian.data.extensions.Describable
-import dev.elbullazul.linkguardian.findActivity
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.dialogs.CollectionPickerDialog
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
-fun BookmarkEditorPage(bookmarkId: String? = null, backend: Backend, preferences: PreferencesManager, onSubmit: () -> Unit) {
+fun BookmarkEditorPage(bookmarkId: String? = null, bookmarkUrl: String? = null, backend: Backend, preferences: PreferencesManager, onSubmit: () -> Unit) {
     val context = LocalContext.current
     val typeFactory = DataFactory(backend.type)
     val update = remember { mutableStateOf(false) }
@@ -49,11 +47,9 @@ fun BookmarkEditorPage(bookmarkId: String? = null, backend: Backend, preferences
     val collectionIndex = remember { mutableIntStateOf(-1) }
     val showCollectionPicker = rememberSaveable { (mutableStateOf(false)) }
 
-    // TODO: only process once! Currently, every time we want to manually add a link, the previous submitted URL remains
-    val intentLink = context.findActivity()?.intent?.getStringExtra(Intent.EXTRA_TEXT)
-    if (!intentLink.isNullOrBlank())
-        url.value = intentLink.toString()
-
+    if (!bookmarkUrl.isNullOrBlank()) {
+        url.value = bookmarkUrl
+    }
     else if (!bookmarkId.isNullOrBlank() && assignExisting.value) {
         val bookmark = backend.getBookmark(bookmarkId)
 

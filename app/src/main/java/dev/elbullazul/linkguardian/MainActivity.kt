@@ -67,44 +67,47 @@ fun App() {
     val preferences = PreferencesManager(context)
     preferences.load()
 
-    val displayBottomBar = rememberSaveable { (mutableStateOf(true)) }
+    val displayBottomBar = rememberSaveable { (mutableStateOf(false)) }
     val displayBackButton = rememberSaveable { (mutableStateOf(false)) }
-    val displayFloatingButton = rememberSaveable { (mutableStateOf(true)) }
+    val displayFloatingButton = rememberSaveable { (mutableStateOf(false)) }
     val loggedIn = rememberSaveable { (mutableStateOf(preferences.validCredentials())) }
 
+    val intent = context.findActivity()?.intent
     val dataFactory = DataFactory(preferences.serverType)
     val backend = dataFactory.backend(preferences.scheme, preferences.domain, preferences.token)
 
-    // TODO: replace this temporary hacky solution with something more standard
-    when (navBackStackEntry?.destination?.route.toString().split("?").first().split(".").last()) {
-        LOGIN::class.simpleName -> {
-            displayBottomBar.value = false
-            displayFloatingButton.value = false
-            displayBackButton.value = false
-        }
+    if (intent?.action == Intent.ACTION_MAIN) {
+        // TODO: replace this temporary hacky solution with something more standard
+        when (navBackStackEntry?.destination?.route.toString().split("?").first().split(".").last()) {
+            LOGIN::class.simpleName -> {
+                displayBottomBar.value = false
+                displayFloatingButton.value = false
+                displayBackButton.value = false
+            }
 
-        BOOKMARKS::class.simpleName -> {
-            displayBottomBar.value = true
-            displayFloatingButton.value = true
-            displayBackButton.value = false
-        }
+            BOOKMARKS::class.simpleName -> {
+                displayBottomBar.value = true
+                displayFloatingButton.value = true
+                displayBackButton.value = false
+            }
 
-        COLLECTIONS::class.simpleName -> {
-            displayBottomBar.value = true
-            displayFloatingButton.value = false
-            displayBackButton.value = false
-        }
+            COLLECTIONS::class.simpleName -> {
+                displayBottomBar.value = true
+                displayFloatingButton.value = false
+                displayBackButton.value = false
+            }
 
-        SETTINGS::class.simpleName -> {
-            displayBottomBar.value = true
-            displayFloatingButton.value = false
-            displayBackButton.value = false
-        }
+            SETTINGS::class.simpleName -> {
+                displayBottomBar.value = true
+                displayFloatingButton.value = false
+                displayBackButton.value = false
+            }
 
-        BOOKMARK_EDITOR::class.simpleName -> {
-            displayBottomBar.value = true
-            displayFloatingButton.value = false
-            displayBackButton.value = true
+            BOOKMARK_EDITOR::class.simpleName -> {
+                displayBottomBar.value = true
+                displayFloatingButton.value = false
+                displayBackButton.value = true
+            }
         }
     }
 
@@ -166,8 +169,8 @@ fun App() {
                     backend = backend,
                     startDestination = if (!loggedIn.value) {
                         LOGIN
-                    } else if (context.findActivity()?.intent?.action == Intent.ACTION_SEND) {
-                        BOOKMARK_EDITOR()
+                    } else if (intent?.action == Intent.ACTION_SEND) {
+                        BOOKMARK_EDITOR(bookmarkUrl = intent.getStringExtra(Intent.EXTRA_TEXT))
                     } else {
                         BOOKMARKS()
                     }
