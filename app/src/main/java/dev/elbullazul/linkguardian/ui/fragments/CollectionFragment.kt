@@ -41,7 +41,7 @@ fun CollectionFragment(collection: Collection, onClick: (String) -> Unit) {
             if (collection is ParentOfMany) {
                 Text(
                     color = MaterialTheme.colorScheme.secondary,
-                    text = "${collection.getMemberCount()} ${stringResource(R.string.links_or_link)}"
+                    text = "${collection.getChildCount()} ${stringResource(R.string.links_or_link)}"
                 )
             }
         }

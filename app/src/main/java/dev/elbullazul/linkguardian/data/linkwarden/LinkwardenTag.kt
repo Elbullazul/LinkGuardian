@@ -18,7 +18,7 @@ class LinkwardenTag(
     @SerialName("_count")
     val linkCount: LinkwardenLinkCount = LinkwardenLinkCount(0)
 ) : Tag, Creatable, Updateable, ParentOfMany {
-    override fun getMemberCount(): Int {
+    override fun getChildCount(): Int {
         return linkCount.value
     }
 

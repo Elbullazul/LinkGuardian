@@ -39,7 +39,7 @@ class LinkwardenCollection(
         return id.toString()
     }
 
-    override fun getMemberCount(): Int {
+    override fun getChildCount(): Int {
         return linkCount.value
     }
 }
