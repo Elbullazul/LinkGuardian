@@ -63,8 +63,7 @@ fun BookmarkListPage(
     val loading = remember { mutableStateOf(true) }
     val itemList = remember { mutableStateListOf<Bookmark>() }
     val selectedBookmarks = remember { mutableStateListOf<Bookmark>() }   // bit of a hack
-    val applyFilters =
-        remember { mutableStateOf(!collectionId.isNullOrBlank() || !tagId.isNullOrBlank()) }
+    val applyFilters = remember { mutableStateOf(!collectionId.isNullOrBlank() || !tagId.isNullOrBlank()) }
 
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState()
