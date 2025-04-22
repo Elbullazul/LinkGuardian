@@ -12,9 +12,13 @@ interface Describable {
         if (description == null || description!!.isEmpty())
             return stringResource(R.string.no_description)
 
-        if (description!!.length > 150)
-            return description!!.substring(0,150) + "..."
+        if (description!!.length > SHORT_LENGTH)
+            return description!!.substring(0, SHORT_LENGTH) + "..."
 
         return description!!
+    }
+
+    companion object {
+        val SHORT_LENGTH = 150
     }
 }

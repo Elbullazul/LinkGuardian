@@ -1,5 +1,6 @@
 package dev.elbullazul.linkguardian.backends
 
+import dev.elbullazul.linkguardian.backends.features.PreviewProvider
 import dev.elbullazul.linkguardian.data.generic.Bookmark
 import dev.elbullazul.linkguardian.data.generic.Collection
 import dev.elbullazul.linkguardian.data.generic.Tag
@@ -24,7 +25,7 @@ class LinkwardenBackend(
     override var scheme: String,
     override var domain: String,
     override var token: String
-) : Backend {
+) : Backend, PreviewProvider {
     override val client: OkHttpClient = OkHttpClient()
     private val json = Json { ignoreUnknownKeys = true }
     override val type = BackendTypes.Linkwarden
@@ -43,6 +44,7 @@ class LinkwardenBackend(
     private val ROUTE_LINKS = "api/v1/links"
     private val ROUTE_DASHBOARD = "api/v2/dashboard"
     private val ROUTE_AVATAR = "api/v1/avatar"
+    private val ROUTE_ARCHIVES = "api/v1/archives"
 
     override suspend fun getBookmarks(collectionId: String?, tagId: String?): List<Bookmark> {
         val args = mutableMapOf(Pair("cursor", "$linkCursor"), Pair("sort", "0"))
@@ -144,28 +146,24 @@ class LinkwardenBackend(
 
     override fun isAuthorized(): Boolean {
         try {
-            val future =
-                ResponseFuture()
-            val url = HttpUrl.Builder()
-                .scheme(scheme)
-                .host(domain)
-                .addPathSegments(ROUTE_LINKS)
-
             val request = Request.Builder()
-                .url(url.build())
+                .url(buildUrl(ROUTE_LINKS))
                 .header("Authorization", "Bearer $token")
                 .build()
 
-            client.newCall(request).enqueue(future)
-            val result = future.get().isSuccessful
+            val result = enqueue(request)
 
-            return result
+            return result.isSuccessful
         }
         catch (e: Exception) {
             println(e.message)
         }
 
         return false
+    }
+
+    override fun getPreviewUrl(bookmark: Bookmark): String {
+        return buildUrl("$ROUTE_ARCHIVES/${bookmark.getId()}", mapOf(Pair("format", "1"))).toString()
     }
 
     override fun reset() {

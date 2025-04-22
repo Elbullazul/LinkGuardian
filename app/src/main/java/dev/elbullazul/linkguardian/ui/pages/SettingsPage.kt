@@ -21,11 +21,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.elbullazul.linkguardian.R
 import dev.elbullazul.linkguardian.ShowToast
+import dev.elbullazul.linkguardian.backends.Backend
+import dev.elbullazul.linkguardian.backends.LinkwardenBackend
+import dev.elbullazul.linkguardian.backends.features.PreviewProvider
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
-fun SettingsPage(preferences: PreferencesManager, onLogout: () -> Unit) {
+fun SettingsPage(backend: Backend, preferences: PreferencesManager, onLogout: () -> Unit) {
     val context = LocalContext.current
     val rowModifier = Modifier.fillMaxWidth().padding(5.dp, 6.dp)
 
@@ -37,12 +40,12 @@ fun SettingsPage(preferences: PreferencesManager, onLogout: () -> Unit) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = stringResource(R.string.oled_theme))
                 Text(
-                    text = stringResource(R.string.work_in_progress),
+                    text = stringResource(R.string.restart_required),
                     color = MaterialTheme.colorScheme.secondary
                 )
             }
             Switch(
-                enabled = false,
+//                enabled = false,
                 checked = enableOledTheme,
                 onCheckedChange = {
                     enableOledTheme = it
@@ -55,13 +58,13 @@ fun SettingsPage(preferences: PreferencesManager, onLogout: () -> Unit) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = stringResource(R.string.show_previews))
                 Text(
-                    text = stringResource(R.string.work_in_progress),
-//                    text = stringResource(R.string.only_if_supported),
+                    text = stringResource(R.string.only_if_supported),
                     color = MaterialTheme.colorScheme.secondary
                 )
             }
             Switch(
-                enabled = false,
+//                enabled = false,
+//                enabled = backend is PreviewProvider,
                 checked = enableBookmarkPreviews,
                 onCheckedChange = {
                     enableBookmarkPreviews = it
@@ -101,6 +104,7 @@ fun SettingsPage(preferences: PreferencesManager, onLogout: () -> Unit) {
 fun SettingsPreview() {
     LinkGuardianTheme {
         SettingsPage(
+            backend = LinkwardenBackend("","",""),
             preferences = PreferencesManager(LocalContext.current),
             onLogout = {}
         )

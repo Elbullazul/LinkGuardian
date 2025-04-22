@@ -16,6 +16,13 @@ private val DarkColorScheme = darkColorScheme(
     tertiary = Pink80,
 )
 
+private val OledColorScheme = darkColorScheme(
+    primary = Purple80,
+    secondary = PurpleGrey80,
+    tertiary = Pink80,
+    background = Black40
+)
+
 private val LightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
@@ -35,6 +42,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun LinkGuardianTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    oledTheme: Boolean = false,
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
@@ -45,7 +53,10 @@ fun LinkGuardianTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColorScheme
+        darkTheme -> if (oledTheme) {
+            println("======================= darkness falls")
+            OledColorScheme
+        } else DarkColorScheme
         else -> LightColorScheme
     }
 

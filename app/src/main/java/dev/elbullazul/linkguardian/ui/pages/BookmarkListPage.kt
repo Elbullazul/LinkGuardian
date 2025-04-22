@@ -153,7 +153,7 @@ fun BookmarkListPage(
             items(itemList) { link ->
                 BookmarkFragment(
                     link = link,
-                    serverUrl = "${backend.scheme}://${backend.domain}",
+                    backend = backend,
                     showPreviews = preferences.showPreviews,
                     onOptionClick = {
                         selectedBookmarks.clear()

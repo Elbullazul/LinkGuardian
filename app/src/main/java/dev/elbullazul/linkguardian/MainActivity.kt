@@ -35,6 +35,9 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import coil3.ImageLoader
+import coil3.compose.setSingletonImageLoaderFactory
+import coil3.request.crossfade
 import dev.elbullazul.linkguardian.data.DataFactory
 import dev.elbullazul.linkguardian.navigation.AppNavController
 import dev.elbullazul.linkguardian.navigation.BOOKMARKS
@@ -76,6 +79,12 @@ fun App() {
     val dataFactory = DataFactory(preferences.serverType)
     val backend = dataFactory.backend(preferences.scheme, preferences.domain, preferences.token)
 
+    setSingletonImageLoaderFactory { context ->
+        ImageLoader.Builder(context)
+            .crossfade(true)
+            .build()
+    }
+
     if (intent?.action == Intent.ACTION_MAIN) {
         // TODO: replace this temporary hacky solution with something more standard
         when (navBackStackEntry?.destination?.route.toString().split("?").first().split(".").last()) {
@@ -112,7 +121,7 @@ fun App() {
     }
 
     // TODO: use `preferences.oledTheme` to enable/disable dark theme when building the theme
-    LinkGuardianTheme {
+    LinkGuardianTheme(oledTheme = preferences.oledTheme) {
         Scaffold(
             topBar = {
                 TopAppBar(

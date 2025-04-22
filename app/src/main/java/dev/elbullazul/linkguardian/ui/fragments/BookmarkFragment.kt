@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
@@ -19,7 +20,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -28,6 +31,12 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.network.NetworkHeaders
+import coil3.network.httpHeaders
+import coil3.request.ImageRequest
+import dev.elbullazul.linkguardian.backends.Backend
+import dev.elbullazul.linkguardian.backends.LinkwardenBackend
+import dev.elbullazul.linkguardian.backends.features.PreviewProvider
 import dev.elbullazul.linkguardian.data.extensions.Describable
 import dev.elbullazul.linkguardian.data.extensions.Previewable
 import dev.elbullazul.linkguardian.data.generic.Bookmark
@@ -39,11 +48,12 @@ import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 @Composable
 fun BookmarkFragment(
     link: Bookmark,
-    serverUrl: String,
+    backend: Backend,
     showPreviews: Boolean,
     onOptionClick: () -> Unit,
     onTagClick: (String) -> Unit
 ) {
+    val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
 
     Card(
@@ -59,19 +69,26 @@ fun BookmarkFragment(
                 .fillMaxWidth()
                 .padding(10.dp, 5.dp)
         ) {
-            if (link is Previewable && showPreviews) {
+            if (backend is PreviewProvider && link is Previewable && showPreviews) {
                 AsyncImage(
-                    model = "$serverUrl/${link.preview}",
+                    model = ImageRequest.Builder(context)
+                        .data(backend.getPreviewUrl(link))
+                        .httpHeaders(backend.getHeaders())
+                        .build(),
+                    onError = { error ->
+                        println(error)
+                    },
                     contentDescription = "",
-                    contentScale = ContentScale.FillBounds,
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .height(80.dp)
                         .width(80.dp)
                         .padding(end = 8.dp)
+                        .clip(shape = RoundedCornerShape(16.dp))
                 )
             }
             Column {
-                Text(linkedText(link.name))
+                Text(linkedText(link.shortName()))
 
                 if (link is Describable) {
                     Text(
@@ -143,7 +160,7 @@ fun LinkCardPreview() {
                     name = "Nameless collection"
                 )
             ),
-            serverUrl = "https://docs.linkwarden.app",
+            backend = LinkwardenBackend("","",""),
             showPreviews = true,
             onOptionClick = {},
             onTagClick = {}

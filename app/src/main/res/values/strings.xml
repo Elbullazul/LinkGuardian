@@ -37,7 +37,7 @@
     <string name="links_or_link">link(s)</string>
     <string name="show_previews">Show image previews in lists</string>
     <string name="none">None</string>
-    <string name="only_if_supported">Only enabled if server supports it</string>
+    <string name="only_if_supported">Only available if server supports it</string>
     <string name="tag">Tag</string>
     <string name="delete">Delete</string>
     <string name="share">Share</string>
@@ -45,4 +45,5 @@
     <string name="links_for_collection">Links for collection \'%1$s\'</string>
     <string name="links_for_tag">Links for tag \'%1$s\'</string>
     <string name="clear_filters">Clear filters</string>
+    <string name="restart_required">Requires app restart</string>
 </resources>

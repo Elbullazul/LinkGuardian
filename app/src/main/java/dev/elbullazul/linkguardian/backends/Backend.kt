@@ -1,5 +1,6 @@
 package dev.elbullazul.linkguardian.backends
 
+import coil3.network.NetworkHeaders
 import dev.elbullazul.linkguardian.data.generic.Bookmark
 import dev.elbullazul.linkguardian.data.generic.Collection
 import dev.elbullazul.linkguardian.data.generic.Tag
@@ -37,7 +38,7 @@ interface Backend {
 
     fun reset()     // reset internal state
 
-    private fun buildUrl(route: String = "", args: Map<String, String> = mapOf()): HttpUrl {
+    fun buildUrl(route: String = "", args: Map<String, String> = mapOf()): HttpUrl {
         val url = HttpUrl.Builder()
             .scheme(scheme)
             .host(domain)
@@ -49,7 +50,7 @@ interface Backend {
         return url.build()
     }
 
-    private fun enqueue(request: Request): Response {
+    fun enqueue(request: Request): Response {
         val future = ResponseFuture()
         client.newCall(request).enqueue(future)
 
@@ -147,6 +148,12 @@ interface Backend {
         }
 
         return false
+    }
+
+    fun getHeaders(): NetworkHeaders {
+        return NetworkHeaders.Builder()
+            .set("Authorization", "Bearer $token")
+            .build()
     }
 
     companion object {
