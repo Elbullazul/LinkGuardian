@@ -150,14 +150,14 @@ fun BookmarkListPage(
                     }
                 }
             }
-            items(itemList) { link ->
+            items(itemList) { bookmark ->
                 BookmarkFragment(
-                    link = link,
+                    bookmark = bookmark,
                     backend = backend,
                     showPreviews = preferences.showPreviews,
                     onOptionClick = {
                         selectedBookmarks.clear()
-                        selectedBookmarks.add(link)
+                        selectedBookmarks.add(bookmark)
 
                         showBottomSheet = true
                     },

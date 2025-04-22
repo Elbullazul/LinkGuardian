@@ -46,7 +46,7 @@ import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
 fun BookmarkFragment(
-    link: Bookmark,
+    bookmark: Bookmark,
     backend: Backend,
     showPreviews: Boolean,
     onOptionClick: () -> Unit,
@@ -60,7 +60,7 @@ fun BookmarkFragment(
             .fillMaxWidth()
             .padding(7.dp, 2.dp)
             .clickable {
-                uriHandler.openUri(link.url)
+                uriHandler.openUri(bookmark.url)
             },
     ) {
         Row(
@@ -68,10 +68,10 @@ fun BookmarkFragment(
                 .fillMaxWidth()
                 .padding(10.dp, 5.dp)
         ) {
-            if (backend is PreviewProvider && link is Previewable && showPreviews) {
+            if (backend is PreviewProvider && bookmark is Previewable && showPreviews) {
                 AsyncImage(
                     model = ImageRequest.Builder(context)
-                        .data(backend.getPreviewUrl(link))
+                        .data(backend.getPreviewUrl(bookmark))
                         .httpHeaders(backend.getHeaders())
                         .build(),
                     onError = { error ->
@@ -87,11 +87,11 @@ fun BookmarkFragment(
                 )
             }
             Column {
-                Text(linkedText(link.shortName()))
+                Text(linkedText(bookmark.shortName()))
 
-                if (link is Describable) {
+                if (bookmark is Describable) {
                     Text(
-                        text = link.truncatedDescription(),
+                        text = bookmark.truncatedDescription(),
                         modifier = Modifier.padding(vertical = 2.dp)
                     )
                 }
@@ -102,7 +102,7 @@ fun BookmarkFragment(
                         modifier = Modifier.height(25.dp).weight(1.0f),
                         verticalArrangement = Arrangement.Center
                     ) {
-                        items(link.tags) { tag ->
+                        items(bookmark.tags) { tag ->
                             TagFragment(tag, onTagClick)
                         }
                     }
@@ -138,7 +138,7 @@ fun linkedText(text: String): AnnotatedString {
 fun LinkCardPreview() {
     LinkGuardianTheme(darkTheme = true) {
         BookmarkFragment(
-            link = LinkwardenLink(
+            bookmark = LinkwardenLink(
                 id = 0,
                 name = "Demo",
                 description = "Link description",
