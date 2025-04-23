@@ -28,7 +28,6 @@ fun AppNavController(
         composable<LOGIN> {
             LoginPage(
                 backend = backend,
-                preferences = preferences,
                 onLogin = { navController.navigate(BOOKMARKS()) }
             )
         }
