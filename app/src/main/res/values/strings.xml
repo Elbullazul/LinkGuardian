@@ -46,4 +46,6 @@
     <string name="links_for_tag">Links for tag \'%1$s\'</string>
     <string name="clear_filters">Clear filter</string>
     <string name="restart_required">Requires app restart</string>
+    <string name="source_code">Source code</string>
+    <string name="about">%1$s %2$s by %3$s</string>
 </resources>

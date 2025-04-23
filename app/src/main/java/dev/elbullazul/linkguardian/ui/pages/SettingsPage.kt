@@ -1,5 +1,9 @@
 package dev.elbullazul.linkguardian.ui.pages
 
+import android.content.pm.PackageInfo
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,28 +18,42 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.elbullazul.linkguardian.R
 import dev.elbullazul.linkguardian.ShowToast
 import dev.elbullazul.linkguardian.backends.Backend
 import dev.elbullazul.linkguardian.backends.LinkwardenBackend
-import dev.elbullazul.linkguardian.backends.features.PreviewProvider
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
+
 
 @Composable
 fun SettingsPage(backend: Backend, preferences: PreferencesManager, onLogout: () -> Unit) {
     val context = LocalContext.current
-    val rowModifier = Modifier.fillMaxWidth().padding(5.dp, 6.dp)
+    val uriHandler = LocalUriHandler.current
+
+    val rowModifier = Modifier
+        .fillMaxWidth()
+        .padding(5.dp, 6.dp)
 
     var enableOledTheme by remember { mutableStateOf(preferences.oledTheme) }
     var enableBookmarkPreviews by remember { mutableStateOf(preferences.showPreviews) }
 
-    Column(modifier = Modifier.fillMaxSize().padding(10.dp, 15.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp, 15.dp)
+    ) {
         Row(modifier = rowModifier) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = stringResource(R.string.oled_theme))
@@ -96,7 +114,39 @@ fun SettingsPage(backend: Backend, preferences: PreferencesManager, onLogout: ()
                 )
             }
         }
+        Row(
+            modifier = rowModifier.weight(1.0f),
+            verticalAlignment = Alignment.Bottom,
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(
+                        R.string.about,
+                        stringResource(R.string.app_name),
+                        versionCode(),
+                        "Elbullazul",
+                    ),
+                    color = MaterialTheme.colorScheme.secondary
+                )
+                Text(
+                    color = MaterialTheme.colorScheme.primary,
+                    text = AnnotatedString(stringResource(R.string.source_code)),
+                    modifier = Modifier
+                        .clickable { uriHandler.openUri("https://github.com/Elbullazul/LinkGuardian") }
+                )
+            }
+        }
     }
+}
+
+@Composable
+fun versionCode(): String {
+    val context = LocalContext.current
+
+    return context.packageManager.getPackageInfo(context.packageName, 0).versionName.toString()
 }
 
 @Preview(showBackground = true)
@@ -104,7 +154,7 @@ fun SettingsPage(backend: Backend, preferences: PreferencesManager, onLogout: ()
 fun SettingsPreview() {
     LinkGuardianTheme {
         SettingsPage(
-            backend = LinkwardenBackend("","",""),
+            backend = LinkwardenBackend("", "", ""),
             preferences = PreferencesManager(LocalContext.current),
             onLogout = {}
         )
