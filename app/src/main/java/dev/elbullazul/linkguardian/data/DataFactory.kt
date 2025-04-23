@@ -18,14 +18,25 @@ class DataFactory(
         return LinkwardenBackend(scheme, domain, secret);
     }
 
-    fun bookmark(id: String, url: String, name: String, description: String = "", tags: List<String>, collection: Collection?): Bookmark {
+    fun bookmark(id: String, url: String, tags: List<Tag>, name: String, description: String? = "", collection: Collection? = null): Bookmark {
         return LinkwardenLink(
             id = id.toInt(),
-            name = name,
             url = url,
-            description = description,
-            tags = tags(tags) as List<LinkwardenTag>,
-            collection = collection as LinkwardenCollection?
+            tags = tags as List<LinkwardenTag>,
+            name = name,
+            description = description.toString(),
+            collection = if (collection != null) collection as LinkwardenCollection else null
+        )
+    }
+
+    fun collection(id: String, name: String = "", description: String? = ""): Collection? {
+        if (id == "-1")
+            return null
+
+        return LinkwardenCollection(
+            id = id.toInt(),
+            name = name,
+            description = description.toString()
         )
     }
 

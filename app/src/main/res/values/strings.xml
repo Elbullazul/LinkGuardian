@@ -21,8 +21,8 @@
     <string name="connected_to_server">Connected to server</string>
     <string name="missing_feature">Not yet available</string>
     <string name="use_https">Use HTTPS</string>
-    <string name="link_submit_success">Link was submitted successfully</string>
-    <string name="link_submit_failed">Submission failed (see logs for details)</string>
+    <string name="submission_successful">Submission successful</string>
+    <string name="submission_failed">Submission failed (see logs for details)</string>
     <string name="tags_placeholder">Tags separated by commas</string>
     <string name="collection_select">Select a collection</string>
     <string name="select">Select</string>

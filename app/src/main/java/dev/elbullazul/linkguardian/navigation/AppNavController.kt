@@ -55,7 +55,6 @@ fun AppNavController(
 
             BookmarkEditorPage(
                 backend = backend,
-                preferences = preferences,
                 onSubmit = {
                     // exit app if bookmarkUrl is not empty (when sharing from external apps)
                     if (!route.bookmarkUrl.isNullOrBlank())
