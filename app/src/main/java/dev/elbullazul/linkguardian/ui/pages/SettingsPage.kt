@@ -95,8 +95,7 @@ fun SettingsPage(
                     text = stringResource(
                         R.string.about,
                         stringResource(R.string.app_name),
-                        versionCode(),
-                        "Elbullazul",
+                        versionCode()
                     ),
                     color = MaterialTheme.colorScheme.secondary
                 )
