@@ -1,9 +1,6 @@
 package dev.elbullazul.linkguardian.ui.pages
 
-import android.content.pm.PackageInfo
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,100 +11,72 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.elbullazul.linkguardian.R
-import dev.elbullazul.linkguardian.ShowToast
 import dev.elbullazul.linkguardian.backends.Backend
 import dev.elbullazul.linkguardian.backends.LinkwardenBackend
 import dev.elbullazul.linkguardian.storage.PreferencesManager
+import dev.elbullazul.linkguardian.ui.models.SettingsViewModel
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
-
 @Composable
-fun SettingsPage(backend: Backend, preferences: PreferencesManager, onLogout: () -> Unit) {
+fun SettingsPage(
+    backend: Backend,
+    settingsViewModel: SettingsViewModel = viewModel(),
+    onLogout: () -> Unit
+) {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
+
+    if (!settingsViewModel.initialized) {
+        settingsViewModel.loadValues(context)
+    }
+
+    fun logout() {
+        settingsViewModel.logout(context)
+        onLogout()
+    }
 
     val rowModifier = Modifier
         .fillMaxWidth()
         .padding(5.dp, 6.dp)
-
-    var enableOledTheme by remember { mutableStateOf(preferences.oledTheme) }
-    var enableBookmarkPreviews by remember { mutableStateOf(preferences.showPreviews) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(10.dp, 15.dp)
     ) {
-        Row(modifier = rowModifier) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(text = stringResource(R.string.oled_theme))
-                Text(
-                    text = stringResource(R.string.restart_required),
-                    color = MaterialTheme.colorScheme.secondary
-                )
+        SettingsLayout(
+            modifier = rowModifier,
+            previewsAvailable = false,      // backend is PreviewProvider
+            isHighContrastThemeEnabled = settingsViewModel.isHighContrastThemeEnabled,
+            arePreviewImagesEnabled = settingsViewModel.arePreviewImagesEnabled,
+            updateHighContrastTheme = {
+                settingsViewModel.updateHighContrastSetting(it)
+                settingsViewModel.save(context)
+            },
+            updatePreviewImages = {
+                settingsViewModel.updatePreviewImagesSetting(it)
+                settingsViewModel.save(context)
             }
-            Switch(
-                enabled = false,
-                checked = enableOledTheme,
-                onCheckedChange = {
-                    enableOledTheme = it
-                    preferences.oledTheme = it
-                    preferences.persist()
-                }
-            )
-        }
-        Row(modifier = rowModifier) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(text = stringResource(R.string.show_previews))
-                Text(
-                    text = stringResource(R.string.only_if_supported),
-                    color = MaterialTheme.colorScheme.secondary
-                )
-            }
-            Switch(
-                enabled = false,
-//                enabled = backend is PreviewProvider,
-                checked = enableBookmarkPreviews,
-                onCheckedChange = {
-                    enableBookmarkPreviews = it
-                    preferences.showPreviews = it
-                    preferences.persist()
-                }
-            )
-        }
+        )
         Row(modifier = rowModifier) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = stringResource(R.string.connected_to_server))
                 Text(
-                    text = preferences.domain,
+                    text = PreferencesManager(context).domain,
                     color = MaterialTheme.colorScheme.secondary
                 )
             }
-            TextButton(
-                onClick = {
-                    preferences.clear()
-
-                    ShowToast(context, context.getString(R.string.logged_out))
-
-                    onLogout()
-                }
-            ) {
+            TextButton(onClick = { logout() }) {
                 Text(
                     text = stringResource(R.string.logout),
                     color = MaterialTheme.colorScheme.onErrorContainer
@@ -143,8 +112,51 @@ fun SettingsPage(backend: Backend, preferences: PreferencesManager, onLogout: ()
 }
 
 @Composable
+fun SettingsLayout(
+    modifier: Modifier,
+    previewsAvailable: Boolean,
+    isHighContrastThemeEnabled: Boolean,
+    arePreviewImagesEnabled: Boolean,
+    updateHighContrastTheme: (Boolean) -> Unit,
+    updatePreviewImages: (Boolean) -> Unit,
+) {
+    Row(modifier = modifier) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(text = stringResource(R.string.oled_theme))
+            Text(
+                text = stringResource(R.string.restart_required),
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
+        Switch(
+            enabled = false,    // TODO: enable when ready
+            checked = isHighContrastThemeEnabled,
+            onCheckedChange = updateHighContrastTheme
+        )
+    }
+    Row(modifier = modifier) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(text = stringResource(R.string.show_previews))
+            Text(
+                text = stringResource(R.string.only_if_supported),
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
+        Switch(
+            enabled = previewsAvailable,
+            checked = arePreviewImagesEnabled,
+            onCheckedChange = updatePreviewImages
+        )
+    }
+}
+
+@Composable
 fun versionCode(): String {
     val context = LocalContext.current
+
+    // show placeholder in preview
+    if (context.packageManager.getPackageInfo(context.packageName, 0) == null)
+        return "vX.X.X"
 
     return context.packageManager.getPackageInfo(context.packageName, 0).versionName.toString()
 }
@@ -155,7 +167,6 @@ fun SettingsPreview() {
     LinkGuardianTheme {
         SettingsPage(
             backend = LinkwardenBackend("", "", ""),
-            preferences = PreferencesManager(LocalContext.current),
             onLogout = {}
         )
     }

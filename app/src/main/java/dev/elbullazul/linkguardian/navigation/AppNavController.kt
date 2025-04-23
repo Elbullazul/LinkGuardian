@@ -78,7 +78,6 @@ fun AppNavController(
         composable<SETTINGS> {
             SettingsPage(
                 backend = backend,
-                preferences = preferences,
                 onLogout = { navController.navigate(LOGIN) }
             )
         }
