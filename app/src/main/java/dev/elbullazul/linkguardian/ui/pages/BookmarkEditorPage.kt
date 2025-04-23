@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -51,6 +53,7 @@ fun BookmarkEditorPage(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 20.dp, vertical = 5.dp)
+            .verticalScroll(rememberScrollState())
     ) {
         BookmarkEditorLayout(
             url = bookmarkEditorViewModel.url,
