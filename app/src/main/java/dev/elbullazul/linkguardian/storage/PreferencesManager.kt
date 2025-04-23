@@ -27,7 +27,7 @@ class PreferencesManager(
     var oledTheme: Boolean = false,
     var serverType: BackendTypes = BackendTypes.None
 ) {
-    fun load() {
+    init {
         val preferences =
             context.getSharedPreferences(PREFERENCES_KEY_FILE, Context.MODE_PRIVATE)
         scheme = preferences.getString(PREF_SCHEME, "")!!.toString()
@@ -37,6 +37,11 @@ class PreferencesManager(
         showPreviews = preferences.getBoolean(PREF_SHOW_PREVIEWS, false)
         oledTheme = preferences.getBoolean(PREF_OLED_THEME, false)
         serverType = intToEnum(preferences.getInt(PREF_SERVER_TYPE, 0))
+    }
+
+    @Deprecated("Moved to `init()` to avoid problems when loading")
+    fun load() {
+
     }
 
     fun validCredentials(): Boolean {

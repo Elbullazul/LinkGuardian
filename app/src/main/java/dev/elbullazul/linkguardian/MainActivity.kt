@@ -68,7 +68,6 @@ fun App() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
     val preferences = PreferencesManager(context)
-    preferences.load()
 
     val displayBottomBar = rememberSaveable { (mutableStateOf(false)) }
     val displayBackButton = rememberSaveable { (mutableStateOf(false)) }
