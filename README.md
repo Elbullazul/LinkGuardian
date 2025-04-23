@@ -13,12 +13,13 @@ An Android client for [Linkwarden](https://github.com/linkwarden/linkwarden). Bu
 - [x] Browse links in the app
 - [x] Add links
 - [x] Receive external links
+- [x] Edit existing links
 - [ ] Search
-- [ ] Edit links, tags and collections
-- [ ] Offline mode
+- [ ] Create, modify and delete tags and collections
 - [ ] Open archived content
+- [ ] Offline mode
 
-### Dependencies
+### External libraries used
 - [OkHttp](https://github.com/square/okhttp) for making HTTP requests
 - [Kotlinx Serialization](https://github.com/Kotlin/kotlinx.serialization) for Json serialization/deserialization
 - [Coil](https://github.com/coil-kt/coil) to display remote images
