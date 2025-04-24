@@ -1,77 +1,98 @@
 package dev.elbullazul.linkguardian.storage
 
 import android.content.Context
+import android.content.SharedPreferences
 import dev.elbullazul.linkguardian.backends.BackendTypes
-import dev.elbullazul.linkguardian.backends.intToEnum
-import dev.elbullazul.linkguardian.backends.enumToInt
-
-const val PREFERENCES_KEY_FILE = "com.elbullazul.linkguardian.PREFERENCES_KEY_FILE"
-const val PREF_DOMAIN = "DOMAIN"
-const val PREF_TOKEN = "TOKEN"
-const val PREF_SCHEME = "SCHEME"
-const val PREF_USERID = "USERID"
-const val PREF_SHOW_PREVIEWS = "SHOW_PREVIEWS"
-const val PREF_OLED_THEME = "OLED_THEME"
-const val PREF_SERVER_TYPE = "SERVER_TYPE"
+import dev.elbullazul.linkguardian.backends.EnumToInt
+import dev.elbullazul.linkguardian.backends.IntToEnum
 
 const val SCHEME_HTTP = "http"
 const val SCHEME_HTTPS = "https"
 
 class PreferencesManager(
-    private val context: Context,
-    var scheme: String = SCHEME_HTTPS,
-    var domain: String = "",
-    var token: String = "",
-    var userId: Int = -1,
-    var showPreviews: Boolean = false,
-    var oledTheme: Boolean = false,
-    var serverType: BackendTypes = BackendTypes.None
+    private val context: Context
 ) {
-    init {
-        val preferences =
-            context.getSharedPreferences(PREFERENCES_KEY_FILE, Context.MODE_PRIVATE)
-        scheme = preferences.getString(PREF_SCHEME, "")!!.toString()
-        domain = preferences.getString(PREF_DOMAIN, "")!!.toString()
-        token = preferences.getString(PREF_TOKEN, "")!!.toString()
-        userId = preferences.getInt(PREF_USERID, -1)
-        showPreviews = preferences.getBoolean(PREF_SHOW_PREVIEWS, false)
-        oledTheme = preferences.getBoolean(PREF_OLED_THEME, false)
-        serverType = intToEnum(preferences.getInt(PREF_SERVER_TYPE, 0))
+    private fun preferences(context: Context): SharedPreferences {
+        return context.getSharedPreferences(PREFERENCES_KEY_FILE, Context.MODE_PRIVATE)
     }
 
-    fun validCredentials(): Boolean {
-        return domain.isNotEmpty() && token.isNotEmpty()
+    fun getScheme(): String {
+        return preferences(context).getString(PREF_SCHEME, SCHEME_HTTPS).toString()
     }
 
-    fun persist() {
-        val preferences =
-            context.getSharedPreferences(PREFERENCES_KEY_FILE, Context.MODE_PRIVATE)
-        with(preferences.edit()) {
+    fun getDomain(): String {
+        return preferences(context).getString(PREF_DOMAIN, "").toString()
+    }
+
+    fun getToken(): String {
+        return preferences(context).getString(PREF_TOKEN, "").toString()
+    }
+
+    fun getBackendType(): BackendTypes {
+        return IntToEnum(preferences(context).getInt(PREF_SERVER_TYPE, 0))
+    }
+
+    fun setBackend(scheme: String, domain: String, token: String, type: BackendTypes) {
+        with(preferences(context).edit()) {
             putString(PREF_SCHEME, scheme)
             putString(PREF_DOMAIN, domain)
             putString(PREF_TOKEN, token)
-            putInt(PREF_USERID, userId)
-            putBoolean(PREF_SHOW_PREVIEWS, showPreviews)
-            putBoolean(PREF_OLED_THEME, oledTheme)
-            putInt(PREF_SERVER_TYPE, enumToInt(serverType))
+            putInt(PREF_SERVER_TYPE, EnumToInt(type))
 
             apply()
         }
     }
 
+    fun getShowPreviews(): Boolean {
+        return preferences(context).getBoolean(PREF_SHOW_PREVIEWS, false)
+    }
+
+    fun setShowPreviews(enabled: Boolean) {
+        with(preferences(context).edit()) {
+            putBoolean(PREF_SHOW_PREVIEWS, enabled)
+            apply()
+        }
+    }
+
+    fun getHighContrastTheme(): Boolean {
+        return preferences(context).getBoolean(PREF_HIGH_CONTRAST_THEME, false)
+    }
+
+    fun setHighContrastTheme(enabled: Boolean) {
+        with(preferences(context).edit()) {
+            putBoolean(PREF_HIGH_CONTRAST_THEME, enabled)
+            apply()
+        }
+    }
+
     fun clear() {
-        val preferences =
-            context.getSharedPreferences(PREFERENCES_KEY_FILE, Context.MODE_PRIVATE)
-        with(preferences.edit()) {
+        with(preferences(context).edit()) {
             remove(PREF_SCHEME)
             remove(PREF_DOMAIN)
             remove(PREF_TOKEN)
-            remove(PREF_USERID)
             remove(PREF_SHOW_PREVIEWS)
-            remove(PREF_OLED_THEME)
+            remove(PREF_HIGH_CONTRAST_THEME)
             remove(PREF_SERVER_TYPE)
 
             commit()
         }
+    }
+
+    fun validCredentials(): Boolean {
+        with(preferences(context)) {
+            return !getString(PREF_DOMAIN, "").isNullOrBlank() &&
+                    !getString(PREF_TOKEN, "").isNullOrBlank()
+        }
+    }
+
+    companion object {
+        const val PREFERENCES_KEY_FILE = "com.elbullazul.linkguardian.PREFERENCES_KEY_FILE"
+
+        private const val PREF_DOMAIN = "DOMAIN"
+        private const val PREF_TOKEN = "TOKEN"
+        private const val PREF_SCHEME = "SCHEME"
+        private const val PREF_SHOW_PREVIEWS = "SHOW_PREVIEWS"
+        private const val PREF_HIGH_CONTRAST_THEME = "OLED_THEME"
+        private const val PREF_SERVER_TYPE = "SERVER_TYPE"
     }
 }

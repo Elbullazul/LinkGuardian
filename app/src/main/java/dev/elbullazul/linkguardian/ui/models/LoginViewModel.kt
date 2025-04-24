@@ -49,7 +49,7 @@ class LoginViewModel : ViewModel() {
             return
         }
 
-        val backend = DataFactory(preferencesManager.serverType).backend(scheme, url, token)
+        val backend = DataFactory(preferencesManager.getBackendType()).backend(scheme, url, token)
 
         if (!backend.isReachable()) {
             ShowToast(context, context.getString(R.string.domain_unreachable))
@@ -63,16 +63,7 @@ class LoginViewModel : ViewModel() {
             return
         }
 
-        saveCredentials(preferencesManager)
+        preferencesManager.setBackend(scheme ,url, token, BackendTypes.Linkwarden)
         onSuccess()
-    }
-
-    private fun saveCredentials(preferencesManager: PreferencesManager) {
-        preferencesManager.scheme = scheme
-        preferencesManager.serverType = BackendTypes.Linkwarden
-        preferencesManager.domain = url
-        preferencesManager.token = token
-
-        preferencesManager.persist()
     }
 }

@@ -32,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil3.ImageLoader
@@ -75,8 +74,8 @@ fun App() {
     val loggedIn = rememberSaveable { (mutableStateOf(preferences.validCredentials())) }
 
     val intent = context.findActivity()?.intent
-    val dataFactory = DataFactory(preferences.serverType)
-    val backend = dataFactory.backend(preferences.scheme, preferences.domain, preferences.token)
+    val dataFactory = DataFactory(preferences.getBackendType())
+    val backend = dataFactory.backend(preferences.getScheme(), preferences.getDomain(), preferences.getToken())
 
     setSingletonImageLoaderFactory { context ->
         ImageLoader.Builder(context)
@@ -119,17 +118,14 @@ fun App() {
         }
     }
 
-    // TODO: use `preferences.oledTheme` to enable/disable dark theme when building the theme
-    LinkGuardianTheme(oledTheme = preferences.oledTheme) {
+    LinkGuardianTheme(highContrast = preferences.getHighContrastTheme()) {
         Scaffold(
             topBar = {
                 TopAppBar(
                     title = { Text(text = stringResource(id = R.string.app_name)) },
                     navigationIcon = {
                         if (displayBackButton.value) {
-                            IconButton(
-                                onClick = { navController.popBackStack() }
-                            ) {
+                            IconButton(onClick = { navController.popBackStack() }) {
                                 Icon(Icons.AutoMirrored.Filled.ArrowBack, "Go back")
                             }
                         }
@@ -161,9 +157,7 @@ fun App() {
             },
             floatingActionButton = {
                 if (displayFloatingButton.value) {
-                    FloatingActionButton(
-                        onClick = { navController.navigate(BOOKMARK_EDITOR()) },
-                    ) {
+                    FloatingActionButton(onClick = { navController.navigate(BOOKMARK_EDITOR()) }) {
                         Icon(Icons.Filled.Add, "")
                     }
                 }
@@ -172,9 +166,8 @@ fun App() {
         ) { innerPadding ->
             Column(modifier = Modifier.padding(innerPadding)) {
                 AppNavController(
-                    navController = navController,
-                    preferences = preferences,
                     backend = backend,
+                    navController = navController,
                     startDestination = if (!loggedIn.value) {
                         LOGIN
                     } else if (intent?.action == Intent.ACTION_SEND) {
@@ -190,7 +183,6 @@ fun App() {
 
 fun routeMatches(destination: NavDestination?, route: Any): Boolean {
     // TODO: surely there is a less hacky way to do this!
-    // TODO: don't highlight if route has arguments?
     return destination?.route.toString().split("?").first().split(".").last() == route::class.simpleName
 }
 

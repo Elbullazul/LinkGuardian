@@ -8,7 +8,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import dev.elbullazul.linkguardian.backends.Backend
 import dev.elbullazul.linkguardian.findActivity
-import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.pages.LoginPage
 import dev.elbullazul.linkguardian.ui.pages.BookmarkListPage
 import dev.elbullazul.linkguardian.ui.pages.CollectionListPage
@@ -18,7 +17,6 @@ import dev.elbullazul.linkguardian.ui.pages.BookmarkEditorPage
 @Composable
 fun AppNavController(
     navController: NavHostController,
-    preferences: PreferencesManager,
     backend: Backend,
     startDestination: Any
 ) {
@@ -41,12 +39,8 @@ fun AppNavController(
                 collectionId = route.collectionId,
                 tagId = route.tagId,
                 backend = backend,
-                onEdit = { bookmarkId ->
-                    navController.navigate(BOOKMARK_EDITOR(bookmarkId))
-                },
-                onTagClick = { tagId ->
-                    navController.navigate(BOOKMARKS(tagId = tagId))
-                }
+                onEdit = { navController.navigate(BOOKMARK_EDITOR(bookmarkId = it)) },
+                onTagClick = { navController.navigate(BOOKMARKS(tagId = it)) }
             )
         }
         composable<BOOKMARK_EDITOR> { backStackEntry ->
@@ -68,9 +62,7 @@ fun AppNavController(
         composable<COLLECTIONS> {
             CollectionListPage(
                 backend = backend,
-                onClick = { id ->
-                    navController.navigate(BOOKMARKS(collectionId = id))
-                }
+                onClick = { navController.navigate(BOOKMARKS(collectionId = it)) }
             )
         }
         composable<SETTINGS> {

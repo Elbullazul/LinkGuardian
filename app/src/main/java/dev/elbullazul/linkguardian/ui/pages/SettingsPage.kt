@@ -72,7 +72,7 @@ fun SettingsPage(
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = stringResource(R.string.connected_to_server))
                 Text(
-                    text = PreferencesManager(context).domain,
+                    text = PreferencesManager(context).getDomain(),
                     color = MaterialTheme.colorScheme.secondary
                 )
             }

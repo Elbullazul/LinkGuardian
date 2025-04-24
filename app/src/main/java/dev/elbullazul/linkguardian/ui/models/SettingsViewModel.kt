@@ -20,8 +20,8 @@ class SettingsViewModel: ViewModel() {
     fun loadValues(context: Context) {
         val preferencesManager = PreferencesManager(context)
 
-        isHighContrastThemeEnabled = preferencesManager.oledTheme
-        arePreviewImagesEnabled = preferencesManager.showPreviews
+        isHighContrastThemeEnabled = preferencesManager.getHighContrastTheme()
+        arePreviewImagesEnabled = preferencesManager.getShowPreviews()
 
         initialized = true
     }
@@ -35,17 +35,15 @@ class SettingsViewModel: ViewModel() {
     }
 
     fun logout(context: Context) {
-        val preferencesManager = PreferencesManager(context)
-        preferencesManager.clear()
+        PreferencesManager(context).clear()
 
         ShowToast(context, context.getString(R.string.logged_out))
     }
 
     fun save(context: Context) {
-        val preferencesManager = PreferencesManager(context)
-
-        preferencesManager.oledTheme = isHighContrastThemeEnabled
-        preferencesManager.showPreviews = arePreviewImagesEnabled
-        preferencesManager.persist()
+        with (PreferencesManager(context)) {
+            setHighContrastTheme(isHighContrastThemeEnabled)
+            setShowPreviews(arePreviewImagesEnabled)
+        }
     }
 }

@@ -35,7 +35,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun LinkGuardianTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    oledTheme: Boolean = false,
+    highContrast: Boolean = false,
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
