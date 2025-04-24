@@ -49,4 +49,5 @@
     <string name="about">%1$s %2$s by Elbullazul</string>
     <string name="missing_information">Please enter a value in all fields</string>
     <string name="optional_parameters">Optional parameters</string>
+    <string name="selected_links">selected links</string>
 </resources>

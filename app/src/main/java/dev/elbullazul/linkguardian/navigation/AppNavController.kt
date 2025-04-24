@@ -41,7 +41,6 @@ fun AppNavController(
                 collectionId = route.collectionId,
                 tagId = route.tagId,
                 backend = backend,
-                preferences = preferences,
                 onEdit = { bookmarkId ->
                     navController.navigate(BOOKMARK_EDITOR(bookmarkId))
                 },
