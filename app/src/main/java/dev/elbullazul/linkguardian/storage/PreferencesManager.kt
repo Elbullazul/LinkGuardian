@@ -19,7 +19,7 @@ const val SCHEME_HTTPS = "https"
 
 class PreferencesManager(
     private val context: Context,
-    var scheme: String = SCHEME_HTTP,
+    var scheme: String = SCHEME_HTTPS,
     var domain: String = "",
     var token: String = "",
     var userId: Int = -1,
@@ -37,11 +37,6 @@ class PreferencesManager(
         showPreviews = preferences.getBoolean(PREF_SHOW_PREVIEWS, false)
         oledTheme = preferences.getBoolean(PREF_OLED_THEME, false)
         serverType = intToEnum(preferences.getInt(PREF_SERVER_TYPE, 0))
-    }
-
-    @Deprecated("Moved to `init()` to avoid problems when loading")
-    fun load() {
-
     }
 
     fun validCredentials(): Boolean {

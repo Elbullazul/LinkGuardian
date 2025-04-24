@@ -10,6 +10,8 @@ import dev.elbullazul.linkguardian.ShowToast
 import dev.elbullazul.linkguardian.backends.BackendTypes
 import dev.elbullazul.linkguardian.data.DataFactory
 import dev.elbullazul.linkguardian.storage.PreferencesManager
+import dev.elbullazul.linkguardian.storage.SCHEME_HTTP
+import dev.elbullazul.linkguardian.storage.SCHEME_HTTPS
 
 class LoginViewModel : ViewModel() {
     var scheme by mutableStateOf("https")
@@ -33,9 +35,9 @@ class LoginViewModel : ViewModel() {
         isHttpsEnabled = useHttps
 
         scheme = if (useHttps)
-            "https"
+            SCHEME_HTTPS
         else
-            "http"
+            SCHEME_HTTP
     }
 
     fun validate(context: Context, onSuccess: () -> Unit) {
