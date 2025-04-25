@@ -1,6 +1,5 @@
 package dev.elbullazul.linkguardian.ui.pages
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,7 +27,6 @@ import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
 @Composable
 fun CollectionEditorPage(
-    backend: Backend,
     collectionId: String? = null,
     collectionEditorViewModel: CollectionEditorViewModel = viewModel(),
     onSubmit: () -> Unit

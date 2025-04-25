@@ -72,7 +72,6 @@ fun AppNavController(
 
             CollectionEditorPage(
                 collectionId = route.collectionId,
-                backend = backend,
                 onSubmit = { navController.navigate(COLLECTIONS) }
             )
         }
