@@ -1,6 +1,7 @@
 package dev.elbullazul.linkguardian.ui.fragments
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -19,14 +20,22 @@ import dev.elbullazul.linkguardian.data.generic.Collection
 import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenCollection
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CollectionFragment(collection: Collection, onClick: (String) -> Unit) {
+fun CollectionFragment(
+    collection: Collection,
+    onClick: (String) -> Unit,
+    onLongClick: (String) -> Unit
+) {
     Column(modifier = Modifier.padding(horizontal = 10.dp)) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .padding(bottom = 10.dp)
-                .clickable { onClick(collection.getId()) }
+                .combinedClickable(
+                    onClick = { onClick(collection.getId()) },
+                    onLongClick = { onLongClick(collection.getId()) }
+                )
         ) {
             Column(modifier = Modifier.weight(1.0f)) {
                 Text(
@@ -53,6 +62,7 @@ fun CollectionFragment(collection: Collection, onClick: (String) -> Unit) {
 fun CollectionfragmentPreview() {
     LinkGuardianTheme(darkTheme = true) {
         CollectionFragment(
+            onLongClick = {},
             onClick = {},
             collection = LinkwardenCollection(
                 id = 0,

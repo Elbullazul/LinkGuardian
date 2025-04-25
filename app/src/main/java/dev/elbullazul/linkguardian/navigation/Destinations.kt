@@ -13,6 +13,7 @@ import kotlinx.serialization.Serializable
 @Serializable data class BOOKMARKS(val collectionId: String? = null, val tagId: String? = null)
 @Serializable data class BOOKMARK_EDITOR(val bookmarkId: String? = null, val bookmarkUrl: String? = null)
 @Serializable data object COLLECTIONS
+@Serializable data class COLLECTION_EDITOR(val collectionId: String? = null)
 @Serializable data object SETTINGS
 
 class Destination(

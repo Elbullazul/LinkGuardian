@@ -13,12 +13,13 @@ import dev.elbullazul.linkguardian.ui.pages.BookmarkListPage
 import dev.elbullazul.linkguardian.ui.pages.CollectionListPage
 import dev.elbullazul.linkguardian.ui.pages.SettingsPage
 import dev.elbullazul.linkguardian.ui.pages.BookmarkEditorPage
+import dev.elbullazul.linkguardian.ui.pages.CollectionEditorPage
 
 @Composable
 fun AppNavController(
-    navController: NavHostController,
     backend: Backend,
-    startDestination: Any
+    startDestination: Any,
+    navController: NavHostController
 ) {
     val context = LocalContext.current
 
@@ -47,6 +48,8 @@ fun AppNavController(
             val route = backStackEntry.toRoute<BOOKMARK_EDITOR>()
 
             BookmarkEditorPage(
+                bookmarkId = route.bookmarkId,
+                bookmarkUrl = route.bookmarkUrl,
                 backend = backend,
                 onSubmit = {
                     // exit app if bookmarkUrl is not empty (when sharing from external apps)
@@ -54,15 +57,23 @@ fun AppNavController(
                         context.findActivity()?.finish()
                     else
                         navController.navigate(BOOKMARKS())
-                },
-                bookmarkId = route.bookmarkId,
-                bookmarkUrl = route.bookmarkUrl
+                }
             )
         }
         composable<COLLECTIONS> {
             CollectionListPage(
                 backend = backend,
+                onEdit = { navController.navigate(COLLECTION_EDITOR(collectionId = it)) },
                 onClick = { navController.navigate(BOOKMARKS(collectionId = it)) }
+            )
+        }
+        composable<COLLECTION_EDITOR> { backStackEntry ->
+            val route = backStackEntry.toRoute<COLLECTION_EDITOR>()
+
+            CollectionEditorPage(
+                collectionId = route.collectionId,
+                backend = backend,
+                onSubmit = { navController.navigate(COLLECTIONS) }
             )
         }
         composable<SETTINGS> {

@@ -30,7 +30,7 @@
     <string name="autogenerate_if_empty">Leave empty to auto-fetch</string>
     <string name="name">Name</string>
     <string name="description">Description</string>
-    <string name="description_placeholder">Notes, thought, etc.</string>
+    <string name="description_placeholder">Describe what you\'re creating</string>
     <string name="collections">Collections</string>
     <string name="work_in_progress">Work in progress</string>
     <string name="links_or_link">link(s)</string>
@@ -50,4 +50,5 @@
     <string name="missing_information">Please enter a value in all fields</string>
     <string name="optional_parameters">Optional parameters</string>
     <string name="selected_links">selected links</string>
+    <string name="collection_name">Collection name</string>
 </resources>

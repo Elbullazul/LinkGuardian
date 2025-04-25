@@ -5,9 +5,11 @@ import dev.elbullazul.linkguardian.backends.BackendTypes
 import dev.elbullazul.linkguardian.backends.LinkwardenBackend
 import dev.elbullazul.linkguardian.data.generic.Bookmark
 import dev.elbullazul.linkguardian.data.generic.Collection
+import dev.elbullazul.linkguardian.data.generic.Data
 import dev.elbullazul.linkguardian.data.generic.Tag
 import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenCollection
 import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenLink
+import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenMember
 import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenTag
 
 class DataFactory(
@@ -29,14 +31,15 @@ class DataFactory(
         )
     }
 
-    fun collection(id: String, name: String = "", description: String? = ""): Collection? {
+    fun collection(id: String, name: String, description: String? = "", ownershipData: List<Data> = listOf()): Collection? {
         if (id == "-1")
             return null
 
         return LinkwardenCollection(
             id = id.toInt(),
             name = name,
-            description = description.toString()
+            description = description.toString(),
+            ownershipData = ownershipData as List<LinkwardenMember>
         )
     }
 

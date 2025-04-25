@@ -28,6 +28,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -54,6 +55,7 @@ fun BookmarkListPage(
     onTagClick: (String) -> Unit
 ) {
     val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
 
     if (!bookmarkListViewModel.initialized)
         bookmarkListViewModel.loadFilters(collectionId, tagId)
@@ -100,7 +102,8 @@ fun BookmarkListPage(
                     bookmark = bookmark,
                     backend = backend,
                     showPreviews = bookmarkListViewModel.showPreviews(context),
-                    onOptionClick = { bookmarkListViewModel.showBottomSheet(bookmark) },
+                    onClick = { uriHandler.openUri(bookmark.url) },
+                    onLongClick = { bookmarkListViewModel.showBottomSheet(bookmark) },
                     onTagClick = onTagClick
                 )
             }

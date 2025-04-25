@@ -5,6 +5,7 @@ import dev.elbullazul.linkguardian.data.generic.Bookmark
 import dev.elbullazul.linkguardian.data.generic.Collection
 import dev.elbullazul.linkguardian.data.generic.Tag
 import dev.elbullazul.linkguardian.data.generic.User
+import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenCollection
 import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenLink
 import dev.elbullazul.linkguardian.data.linkwarden.LinkwardenTag
 import dev.elbullazul.linkguardian.data.linkwarden.responses.LinkwardenCollectionResponse
@@ -14,10 +15,8 @@ import dev.elbullazul.linkguardian.data.linkwarden.responses.LinkwardenLinksResp
 import dev.elbullazul.linkguardian.data.linkwarden.responses.LinkwardenTagsResponse
 import dev.elbullazul.linkguardian.data.linkwarden.responses.LinkwardenUserResponse
 import dev.elbullazul.linkguardian.data.linkwarden.responses.LinkwardenUsersResponse
-import dev.elbullazul.linkguardian.futures.ResponseFuture
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
@@ -142,6 +141,26 @@ class LinkwardenBackend(
 
     override fun deleteBookmark(bookmark: Bookmark): Boolean {
         return delete("$ROUTE_LINKS/${bookmark.getId()}")
+    }
+
+    override fun createCollection(collection: Collection): Boolean {
+        val payload = json.encodeToString<LinkwardenCollection>(collection as LinkwardenCollection)
+
+        println(payload)
+
+        return post(ROUTE_COLLECTIONS, payload)
+    }
+
+    override fun updateCollection(collection: Collection): Boolean {
+        collection as LinkwardenCollection
+        println(collection.ownershipData)
+        val payload = json.encodeToString<LinkwardenCollection>(collection as LinkwardenCollection)
+
+        return put("$ROUTE_COLLECTIONS/${collection.id}", payload)
+    }
+
+    override fun deleteCollection(collection: Collection): Boolean {
+        return delete("$ROUTE_COLLECTIONS/${collection.getId()}")
     }
 
     override fun isAuthorized(): Boolean {

@@ -27,6 +27,7 @@ interface Backend {
     suspend fun getBookmarks(collectionId: String? = null, tagId: String? = null): List<Bookmark>
     fun getCollections(): List<Collection>
     fun getTags(): List<Tag>
+
     fun getBookmark(id: String): Bookmark
     fun getCollection(id: String): Collection
     fun getTag(id: String): Tag
@@ -35,6 +36,10 @@ interface Backend {
     fun createBookmark(bookmark: Bookmark): Boolean
     fun updateBookmark(bookmark: Bookmark): Boolean
     fun deleteBookmark(bookmark: Bookmark): Boolean
+
+    fun createCollection(collection: Collection): Boolean
+    fun updateCollection(collection: Collection): Boolean
+    fun deleteCollection(collection: Collection): Boolean
 
     fun reset()     // reset internal state
 

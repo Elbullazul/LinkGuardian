@@ -42,6 +42,7 @@ import dev.elbullazul.linkguardian.navigation.AppNavController
 import dev.elbullazul.linkguardian.navigation.BOOKMARKS
 import dev.elbullazul.linkguardian.navigation.BOOKMARK_EDITOR
 import dev.elbullazul.linkguardian.navigation.COLLECTIONS
+import dev.elbullazul.linkguardian.navigation.COLLECTION_EDITOR
 import dev.elbullazul.linkguardian.navigation.LOGIN
 import dev.elbullazul.linkguardian.navigation.SETTINGS
 import dev.elbullazul.linkguardian.navigation.destinations
@@ -100,8 +101,14 @@ fun App() {
 
             COLLECTIONS::class.simpleName -> {
                 displayBottomBar.value = true
-                displayFloatingButton.value = false
+                displayFloatingButton.value = true
                 displayBackButton.value = false
+            }
+
+            COLLECTION_EDITOR::class.simpleName -> {
+                displayBottomBar.value = true
+                displayFloatingButton.value = false
+                displayBackButton.value = true
             }
 
             SETTINGS::class.simpleName -> {
@@ -157,9 +164,13 @@ fun App() {
             },
             floatingActionButton = {
                 if (displayFloatingButton.value) {
-                    FloatingActionButton(onClick = { navController.navigate(BOOKMARK_EDITOR()) }) {
-                        Icon(Icons.Filled.Add, "")
-                    }
+                    FloatingActionButton(onClick = {
+                        if (route(navBackStackEntry?.destination) == COLLECTIONS::class.simpleName)
+                            navController.navigate(COLLECTION_EDITOR())
+                        else
+                            navController.navigate(BOOKMARK_EDITOR())
+                        }
+                    ) { Icon(Icons.Filled.Add, "") }
                 }
             },
             modifier = Modifier.fillMaxSize()
@@ -179,6 +190,10 @@ fun App() {
             }
         }
     }
+}
+
+fun route(destination: NavDestination?): String {
+    return destination?.route.toString().split("?").first().split(".").last()
 }
 
 fun routeMatches(destination: NavDestination?, route: Any): Boolean {

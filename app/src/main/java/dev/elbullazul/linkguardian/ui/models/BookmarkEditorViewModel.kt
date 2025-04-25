@@ -104,17 +104,14 @@ class BookmarkEditorViewModel : ViewModel() {
     }
 
     private fun backend(context: Context): Backend {
-        val preferencesManager = PreferencesManager(context)
-        return DataFactory(preferencesManager.getBackendType()).backend(
-            preferencesManager.getScheme(),
-            preferencesManager.getDomain(),
-            preferencesManager.getToken()
-        )
+        with (PreferencesManager(context)) {
+            return DataFactory(getBackendType())
+                .backend(getScheme(), getDomain(), getToken())
+        }
     }
 
     private fun toBookmark(backend: Backend, context: Context): Bookmark {
-        val preferencesManager = PreferencesManager(context)
-        val factory = DataFactory(preferencesManager.getBackendType())
+        val factory = DataFactory(PreferencesManager(context).getBackendType())
 
         val tags = factory.tags(tags.split(","))
         val collection = if (collectionId == "-1") null else backend.getCollection(collectionId)
