@@ -20,8 +20,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.elbullazul.linkguardian.R
-import dev.elbullazul.linkguardian.backends.Backend
-import dev.elbullazul.linkguardian.backends.LinkwardenBackend
 import dev.elbullazul.linkguardian.ui.models.CollectionEditorViewModel
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 
@@ -100,9 +98,6 @@ fun CollectionEditorLayout(
 @Composable
 fun CollectionEditorPreview() {
     LinkGuardianTheme(darkTheme = true) {
-        CollectionEditorPage(
-            backend = LinkwardenBackend("", "", ""),
-            onSubmit = {}
-        )
+        CollectionEditorPage {}
     }
 }
