@@ -17,7 +17,7 @@ class DataFactory(
 ) {
     // only linkwarden types for now
     fun backend(scheme: String, domain: String, secret: String): Backend {
-        return LinkwardenBackend(scheme, domain, secret);
+        return LinkwardenBackend(scheme, domain, secret)
     }
 
     fun bookmark(id: String, url: String, tags: List<Tag>, name: String, description: String? = "", collection: Collection? = null): Bookmark {
