@@ -17,8 +17,11 @@ import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
 fun CollectionListPage(
     backend: Backend,
     onClick: (String) -> Unit,
-    onEdit: (String) -> Unit) {
-    LazyColumn(modifier = Modifier.fillMaxWidth().padding(horizontal = 6.dp)) {
+    onEdit: (String) -> Unit
+) {
+    LazyColumn(modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 6.dp)) {
         items(backend.getCollections()) { collection ->
             CollectionFragment(
                 collection = collection,
