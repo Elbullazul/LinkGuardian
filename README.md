@@ -14,8 +14,8 @@ An Android client for [Linkwarden](https://github.com/linkwarden/linkwarden). Bu
 - [x] Add links
 - [x] Receive external links
 - [x] Edit existing links
+- [x] Create, modify and delete collections
 - [ ] Search
-- [ ] Create, modify and delete tags and collections
 - [ ] Open archived content
 - [ ] Offline mode
 
