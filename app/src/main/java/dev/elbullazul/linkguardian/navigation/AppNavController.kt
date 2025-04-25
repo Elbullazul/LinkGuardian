@@ -14,6 +14,7 @@ import dev.elbullazul.linkguardian.ui.pages.CollectionListPage
 import dev.elbullazul.linkguardian.ui.pages.SettingsPage
 import dev.elbullazul.linkguardian.ui.pages.BookmarkEditorPage
 import dev.elbullazul.linkguardian.ui.pages.CollectionEditorPage
+import dev.elbullazul.linkguardian.ui.pages.TagListPage
 
 @Composable
 fun AppNavController(
@@ -73,6 +74,12 @@ fun AppNavController(
             CollectionEditorPage(
                 collectionId = route.collectionId,
                 onSubmit = { navController.navigate(COLLECTIONS) }
+            )
+        }
+        composable<TAGS> {
+            TagListPage(
+                onClick = { navController.navigate(BOOKMARKS(tagId = it)) },
+                onEdit = {}
             )
         }
         composable<SETTINGS> {

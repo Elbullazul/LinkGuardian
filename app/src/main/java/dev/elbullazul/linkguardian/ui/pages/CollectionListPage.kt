@@ -21,7 +21,8 @@ fun CollectionListPage(
 ) {
     LazyColumn(modifier = Modifier
         .fillMaxWidth()
-        .padding(horizontal = 6.dp)) {
+        .padding(horizontal = 6.dp)
+    ) {
         items(backend.getCollections()) { collection ->
             CollectionFragment(
                 collection = collection,

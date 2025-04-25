@@ -2,6 +2,7 @@ package dev.elbullazul.linkguardian.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.List
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -14,6 +15,7 @@ import kotlinx.serialization.Serializable
 @Serializable data class BOOKMARK_EDITOR(val bookmarkId: String? = null, val bookmarkUrl: String? = null)
 @Serializable data object COLLECTIONS
 @Serializable data class COLLECTION_EDITOR(val collectionId: String? = null)
+@Serializable data object TAGS
 @Serializable data object SETTINGS
 
 class Destination(
@@ -25,5 +27,6 @@ class Destination(
 val destinations = listOf(
     Destination(label = R.string.dashboard, icon = Icons.Outlined.Home, route = BOOKMARKS()),
     Destination(label = R.string.collections, icon = Icons.AutoMirrored.Outlined.List, route = COLLECTIONS),
+    Destination(label = R.string.tags, icon = Icons.Outlined.Edit, route = TAGS),
     Destination(label = R.string.settings, icon = Icons.Outlined.Settings, route = SETTINGS)
 )
