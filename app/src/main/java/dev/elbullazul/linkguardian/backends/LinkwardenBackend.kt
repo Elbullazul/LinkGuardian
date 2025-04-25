@@ -152,8 +152,6 @@ class LinkwardenBackend(
     }
 
     override fun updateCollection(collection: Collection): Boolean {
-        collection as LinkwardenCollection
-        println(collection.ownershipData)
         val payload = json.encodeToString<LinkwardenCollection>(collection as LinkwardenCollection)
 
         return put("$ROUTE_COLLECTIONS/${collection.id}", payload)
