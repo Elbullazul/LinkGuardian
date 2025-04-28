@@ -27,6 +27,6 @@ class Destination(
 val destinations = listOf(
     Destination(label = R.string.dashboard, icon = Icons.Outlined.Home, route = BOOKMARKS()),
     Destination(label = R.string.collections, icon = Icons.AutoMirrored.Outlined.List, route = COLLECTIONS),
-    Destination(label = R.string.tags, icon = Icons.Outlined.Edit, route = TAGS),
+//    Destination(label = R.string.tags, icon = Icons.Outlined.Edit, route = TAGS),
     Destination(label = R.string.settings, icon = Icons.Outlined.Settings, route = SETTINGS)
 )
