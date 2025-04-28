@@ -1,0 +1,11 @@
+- Fix some serialization issues
+- Implement view model controller in most screens
+- Make all fields outlined instead of filled for a more clean look
+- Don't show navigation options when app is opened from a share intent
+- Exit app after processing a share intent
+- Make tags in bookmark view clickable (opens filtered bookmark view)
+- Long-press to edit, share or delete a bookmark
+- Make bookmark editor scrollable in landscape mode
+- Updated collection list page
+- Make collections in collection page clickable
+- Added collection editor - long-press a collection from the list to open the editor
