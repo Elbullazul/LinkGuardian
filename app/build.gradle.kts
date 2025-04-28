@@ -13,8 +13,8 @@ android {
         applicationId = "dev.elbullazul.linkguardian"
         minSdk = 24
         targetSdk = 35
-        versionCode = 7
-        versionName = "v0.0.7"
+        versionCode = 8
+        versionName = "v0.0.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
