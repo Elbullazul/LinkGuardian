@@ -20,7 +20,7 @@ class DataFactory(
         return LinkwardenBackend(scheme, domain, secret)
     }
 
-    fun bookmark(id: String, url: String, tags: List<Tag>, name: String, description: String? = "", collection: Collection? = null): Bookmark {
+    fun bookmark(id: String, url: String?, tags: List<Tag>, name: String, description: String? = "", collection: Collection? = null): Bookmark {
         return LinkwardenLink(
             id = id.toInt(),
             url = url,

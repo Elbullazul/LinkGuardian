@@ -1,5 +1,8 @@
 package dev.elbullazul.linkguardian.data.linkwarden
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import dev.elbullazul.linkguardian.R
 import dev.elbullazul.linkguardian.data.extensions.Collectionable
 import dev.elbullazul.linkguardian.data.extensions.Colorizable
 import dev.elbullazul.linkguardian.data.extensions.Creatable
@@ -21,7 +24,7 @@ class LinkwardenLink(
     override val icon: String? = null,
     override val iconWeight: String? = null,
     override val color: String? = null,         // doc says it's not supposed to be null?
-    override val url: String,
+    override val url: String? = null,           // some type of resources don't have an URL (ex. images)
     val textContent: String? = null,
     override val preview: String? = null,
     val image: String? = null,
@@ -52,5 +55,14 @@ class LinkwardenLink(
         }
 
         return tagsString.dropLast(1)
+    }
+
+    @Composable
+    override fun truncatedDescription(): String {
+        // TODO: this should be handled in a more elegant matter in the future
+        if (url.isNullOrBlank())
+            return stringResource(R.string.unsupported_resource)
+
+        return super.truncatedDescription()
     }
 }

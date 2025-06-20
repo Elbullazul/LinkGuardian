@@ -102,7 +102,7 @@ fun BookmarkListPage(
                     bookmark = bookmark,
                     backend = backend,
                     showPreviews = bookmarkListViewModel.showPreviews(context),
-                    onClick = { uriHandler.openUri(bookmark.url) },
+                    onClick = { if (!bookmark.url.isNullOrBlank()) uriHandler.openUri(bookmark.url.toString()) },
                     onLongClick = { bookmarkListViewModel.showBottomSheet(bookmark) },
                     onTagClick = onTagClick
                 )

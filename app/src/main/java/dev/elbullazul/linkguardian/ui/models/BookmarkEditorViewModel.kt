@@ -48,7 +48,7 @@ class BookmarkEditorViewModel : ViewModel() {
         val bookmark = backend.getBookmark(bookmarkId)
 
         id = bookmark.getId()
-        url = bookmark.url
+        url = bookmark.url.toString()
         tags = bookmark.tagsToString()
         name = bookmark.name
         description = if (bookmark is Describable) bookmark.description.toString() else ""
@@ -118,7 +118,7 @@ class BookmarkEditorViewModel : ViewModel() {
 
         val bookmark = factory.bookmark(
             id = id,
-            url = url,
+            url = if (url == "null") null else url,
             name = name,
             description = description,
             tags = tags,

@@ -23,6 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.elbullazul.linkguardian.R
 import dev.elbullazul.linkguardian.backends.Backend
 import dev.elbullazul.linkguardian.backends.LinkwardenBackend
+import dev.elbullazul.linkguardian.backends.features.PreviewProvider
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 import dev.elbullazul.linkguardian.ui.models.SettingsViewModel
 import dev.elbullazul.linkguardian.ui.theme.LinkGuardianTheme
@@ -56,7 +57,7 @@ fun SettingsPage(
     ) {
         SettingsLayout(
             modifier = rowModifier,
-            previewsAvailable = false,      // backend is PreviewProvider
+            previewsAvailable = backend is PreviewProvider,
             isHighContrastThemeEnabled = settingsViewModel.isHighContrastThemeEnabled,
             arePreviewImagesEnabled = settingsViewModel.arePreviewImagesEnabled,
             updateHighContrastTheme = {

@@ -167,7 +167,7 @@ class BookmarkListViewModel: ViewModel() {
     fun selectedLinkDescription(context: Context): String {
         with (selectedBookmarks) {
             if (size == 1)
-                return first().url
+                return first().url.toString()
 
             return ""
         }
