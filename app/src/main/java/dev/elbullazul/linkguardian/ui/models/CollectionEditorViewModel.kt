@@ -12,6 +12,7 @@ import dev.elbullazul.linkguardian.data.DataFactory
 import dev.elbullazul.linkguardian.data.extensions.Describable
 import dev.elbullazul.linkguardian.data.extensions.OwnableByMany
 import dev.elbullazul.linkguardian.data.generic.Collection
+import dev.elbullazul.linkguardian.data.generic.Data
 import dev.elbullazul.linkguardian.storage.PreferencesManager
 
 class CollectionEditorViewModel: ViewModel() {
@@ -26,6 +27,7 @@ class CollectionEditorViewModel: ViewModel() {
         private set
     var update by mutableStateOf(false)
         private set
+    var ownershipData: List<Data> = listOf()
 
     fun load(collectionId: String?, context: Context) {
         initialized = true
@@ -42,6 +44,8 @@ class CollectionEditorViewModel: ViewModel() {
 
         if (collection is Describable)
             description = collection.description.toString()
+        if (collection is OwnableByMany)
+            ownershipData = collection.ownershipData
 
         update = true
     }
@@ -98,16 +102,12 @@ class CollectionEditorViewModel: ViewModel() {
 
     private fun toCollection(context: Context): Collection {
         val factory = DataFactory(PreferencesManager(context).getBackendType())
-        val ogCollection = backend(context).getCollection(id)
-
-        if (ogCollection is OwnableByMany)
-            println(ogCollection.ownershipData)
 
         val collection = factory.collection(
             id = id,
             name = name,
             description = description,
-            ownershipData = if (ogCollection is OwnableByMany) ogCollection.ownershipData else listOf()
+            ownershipData = if (update) ownershipData else listOf()
         )
 
         return collection!!
