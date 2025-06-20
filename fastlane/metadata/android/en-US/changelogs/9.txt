@@ -1,0 +1,3 @@
+- Fix crash when creating new collection from the "Collections" tab
+- Fix crash for case where bookmark had a null URL (partial fix)
+- Enable image preview feature (can make the app slower)
