@@ -72,11 +72,11 @@ fun App() {
     val displayBottomBar = rememberSaveable { (mutableStateOf(false)) }
     val displayBackButton = rememberSaveable { (mutableStateOf(false)) }
     val displayFloatingButton = rememberSaveable { (mutableStateOf(false)) }
-    val loggedIn = rememberSaveable { (mutableStateOf(preferences.validCredentials())) }
 
     val intent = context.findActivity()?.intent
     val dataFactory = DataFactory(preferences.getBackendType())
     val backend = dataFactory.backend(preferences.getScheme(), preferences.getDomain(), preferences.getToken())
+    val authorized = rememberSaveable { (mutableStateOf(backend.isAuthorized())) }
 
     setSingletonImageLoaderFactory { context ->
         ImageLoader.Builder(context)
@@ -179,7 +179,7 @@ fun App() {
                 AppNavController(
                     backend = backend,
                     navController = navController,
-                    startDestination = if (!loggedIn.value) {
+                    startDestination = if (!authorized.value) {
                         LOGIN
                     } else if (intent?.action == Intent.ACTION_SEND) {
                         BOOKMARK_EDITOR(bookmarkUrl = intent.getStringExtra(Intent.EXTRA_TEXT))
